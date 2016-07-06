@@ -4,6 +4,8 @@ import com.userservice.model.User;
 import com.userservice.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
  * Created by Achim Timis on 7/6/2016.
  */
 
+@RefreshScope
 @RestController
 public class UserController {
 
@@ -53,6 +56,15 @@ public class UserController {
 
 
     }
+
+//        @Value("${message}")
+//        private String message;
+//
+//        @RequestMapping("message")
+//        String getMessage(){
+//            return this.message;
+//    }
+
 
 
 
