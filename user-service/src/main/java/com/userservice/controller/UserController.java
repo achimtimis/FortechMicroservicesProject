@@ -57,13 +57,13 @@ public class UserController {
 
     }
 
-//        @Value("${message}")
-//        private String message;
-//
-//        @RequestMapping("message")
-//        String getMessage(){
-//            return this.message;
-//    }
+        @Value("${message}")
+        private String message;
+
+        @RequestMapping("message")
+        String getMessage(){
+            return this.message;
+    }
 
 
 

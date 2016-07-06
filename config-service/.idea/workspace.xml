@@ -73,10 +73,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/configservice/ConfigServiceApplication.java" />
         <option value="$PROJECT_DIR$/src/main/resources/user-service.properties" />
         <option value="$PROJECT_DIR$/src/main/resources/config/user-service.properties" />
         <option value="$PROJECT_DIR$/src/main/resources/application.properties" />
+        <option value="$PROJECT_DIR$/src/main/java/com/configservice/ConfigServiceApplication.java" />
       </list>
     </option>
   </component>
@@ -666,12 +666,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1467803875399</updated>
-      <workItem from="1467803878804" duration="5591000" />
+      <workItem from="1467803878804" duration="6189000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5591000" />
+    <option name="totallyTimeSpent" value="6189000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="916" extended-state="7" />
