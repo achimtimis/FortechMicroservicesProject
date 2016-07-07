@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpMethod;
@@ -18,7 +20,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
 
+
 @SpringBootApplication
+@EnableBinding(Source.class)
 @EnableEurekaClient
 public class ProductServiceApplication {
 
