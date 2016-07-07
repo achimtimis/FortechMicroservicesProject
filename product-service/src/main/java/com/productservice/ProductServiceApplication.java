@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 
 
 @SpringBootApplication
-@EnableBinding(Source.class)
 @EnableEurekaClient
 public class ProductServiceApplication {
 

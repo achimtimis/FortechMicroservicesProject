@@ -22,9 +22,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @Autowired
-    @Output(Source.OUTPUT)
-    private MessageChannel messageChannel;
+
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getProducts(){
@@ -53,9 +51,5 @@ public class ProductController {
 
 
 
-    @RequestMapping(method = RequestMethod.POST)
-    public void write(@RequestBody Product p){
-
-    }
 
 }
