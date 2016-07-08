@@ -24,16 +24,16 @@
         <processorPath useClasspath="true" />
         <module name="config-service" />
         <module name="eureka-service" />
+        <module name="order-service" />
         <module name="product-service" />
         <module name="user-service" />
         <module name="zuul-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="config-server" target="1.8" />
       <module name="config-service" target="1.8" />
-      <module name="eureka-server" target="1.8" />
       <module name="eureka-service" target="1.8" />
+      <module name="order-service" target="1.8" />
       <module name="product-service" target="1.8" />
       <module name="user-service" target="1.8" />
       <module name="zuul-service" target="1.8" />

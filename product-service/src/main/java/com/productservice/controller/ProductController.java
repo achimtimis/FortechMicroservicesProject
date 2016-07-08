@@ -22,8 +22,6 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-
-
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getProducts(){
         return productService.get();
@@ -48,8 +46,5 @@ public class ProductController {
     public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product){
         return productService.update(product);
     }
-
-
-
 
 }
