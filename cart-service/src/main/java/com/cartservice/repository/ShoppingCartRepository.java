@@ -1,0 +1,17 @@
+package com.cartservice.repository;
+
+import com.cartservice.model.ShoppingCart;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * Created by Achim Timis on 7/7/2016.
+ */
+@Transactional
+public interface ShoppingCartRepository extends JpaRepository<ShoppingCart,Long> {
+
+    List<ShoppingCart> findByUserid(Long userid);
+}
