@@ -1,8 +1,7 @@
 package com.cartservice.repository;
 
-import com.cartservice.model.ShoppingCart;
+import com.shopcommon.model.ShoppingCart;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.cartservice.model;
+package com.shopcommon.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -9,10 +9,11 @@ import java.io.Serializable;
  * Created by Achim Timis on 7/7/2016.
  */
 @Entity
+@Table(schema = "carts")
 public class ShoppingCartProduct implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
 
@@ -30,6 +31,7 @@ public class ShoppingCartProduct implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id",nullable = true)
     private ShoppingCart shoppingCart;
+
 
     private Long productId;
 

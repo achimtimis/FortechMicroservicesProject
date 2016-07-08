@@ -1,7 +1,9 @@
-package com.orderservice.model;
+package com.shopcommon.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -9,14 +11,16 @@ import javax.persistence.*;
  * Created by Flaviu Cicio on 07.07.2016.
  */
 @Entity
-@Table(name = "order_product")
+@Table(name = "order_product", schema = "orders")
 public class OrderProduct {
 
     @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
     @ManyToOne
     @JoinColumn(name="ORDER_ID")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Order byOrder;
 
     private Long productId;

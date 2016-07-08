@@ -1,10 +1,19 @@
 package com.orderservice.service;
 
-import com.orderservice.model.Order;
+import com.orderservice.repository.OrderProductRepository;
 import com.orderservice.repository.OrderRepository;
+import com.shopcommon.model.Order;
+import com.shopcommon.model.Product;
+import com.shopcommon.model.User;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,8 +21,13 @@ import java.util.List;
  */
 @Service
 public class OrderService {
+
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderProductRepository orderProductRepository;
+
 
     public List<Order> get(){
         return orderRepository.findAll();
@@ -24,7 +38,13 @@ public class OrderService {
     }
 
     public Order create(Order order){
-        return orderRepository.saveAndFlush(order);
+        Order o = orderRepository.saveAndFlush(order);
+
+        order.getProducts().stream().forEach(orderProduct -> {
+            orderProduct.setOrder(o);
+            orderProductRepository.saveAndFlush(orderProduct);
+        });
+        return o;
     }
 
     public void delete(Long id){
@@ -40,4 +60,6 @@ public class OrderService {
 
         return null;
     }
+
+
 }

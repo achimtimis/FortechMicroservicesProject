@@ -1,29 +1,41 @@
-package com.orderservice.model;
+package com.shopcommon.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.joda.ser.LocalDateTimeSerializer;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Flaviu Cicio on 07.07.2016.
  */
 @Entity
-@Table(name = "t_order")
+@Table(name = "t_order", schema = "orders")
 public class Order {
 
     @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
     private Long userId;
 
-    @OneToMany(mappedBy="byOrder", cascade = CascadeType.ALL)
-    private List<OrderProduct> products;
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
+
+
+
+    @OneToMany(mappedBy="byOrder", cascade = CascadeType.ALL)
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
+    private List<OrderProduct> products;
 
     public Order() {
     }
@@ -60,6 +72,7 @@ public class Order {
     public void setProducts(List<OrderProduct> products) {
         this.products = products;
     }
+
 
     public LocalDateTime getDate() {
         return date;

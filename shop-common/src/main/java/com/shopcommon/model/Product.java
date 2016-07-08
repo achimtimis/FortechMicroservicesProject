@@ -1,15 +1,17 @@
-package com.orderservice.model;
+package com.shopcommon.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
  * Created by Flaviu Cicio on 06.07.2016.
  */
+@Entity
+@Table(name = "product", schema = "products")
 public class Product implements Serializable{
 
+    @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
     private String name;
@@ -45,6 +47,13 @@ public class Product implements Serializable{
         this.stock = stock;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {
