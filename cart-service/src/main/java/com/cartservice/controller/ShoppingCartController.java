@@ -1,10 +1,10 @@
 package com.cartservice.controller;
 
-import com.cartservice.model.Product;
-import com.cartservice.model.ShoppingCartProduct;
-import com.cartservice.model.ShoppingCart;
 import com.cartservice.repository.ShoppingCartProductsRepository;
 import com.cartservice.repository.ShoppingCartRepository;
+import com.shopcommon.model.Product;
+import com.shopcommon.model.ShoppingCart;
+import com.shopcommon.model.ShoppingCartProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

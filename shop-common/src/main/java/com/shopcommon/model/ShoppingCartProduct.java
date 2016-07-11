@@ -1,6 +1,6 @@
-package com.cartservice.model;
+package com.shopcommon.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Created by Achim Timis on 7/7/2016.
  */
 @Entity
+@Table(schema = "carts")
 public class ShoppingCartProduct implements Serializable {
 
     @Id

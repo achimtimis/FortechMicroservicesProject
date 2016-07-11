@@ -1,18 +1,17 @@
-package com.orderservice.model;
+package com.shopcommon.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Flaviu Cicio on 07.07.2016.
  */
 @Entity
-@Table(name = "t_order")
+@Table(name = "t_order", schema = "orders")
 public class Order {
 
     @Id

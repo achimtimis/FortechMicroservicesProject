@@ -1,8 +1,7 @@
 package com.userservice.repository;
 
-import com.userservice.model.User;
+import com.shopcommon.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.util.List;
 

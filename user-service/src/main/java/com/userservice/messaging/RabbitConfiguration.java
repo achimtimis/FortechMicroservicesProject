@@ -1,4 +1,4 @@
-package com.orderservice.messaging;
+package com.userservice.messaging;
 
 import org.apache.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -12,15 +12,9 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * RabbitMQ Configuration File
- *
- * !!! You need to install RabbitMQ server from https://www.rabbitmq.com/
- *
- */
 @Configuration
 public class RabbitConfiguration {
-
+    Logger logger = Logger.getLogger(RabbitConfiguration.class);
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory =
@@ -41,9 +35,18 @@ public class RabbitConfiguration {
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
-        template.setRoutingKey("order-queue");
+        template.setRoutingKey("user-queue");
         template.setMessageConverter(jsonMessageConverter());
         return template;
+    }
+    @Bean
+    public Queue myQueue1() {
+        return new Queue("queue1");
+    }
+
+    @Bean
+    public Queue userQueue() {
+        return new Queue("user-queue");
     }
 
 }

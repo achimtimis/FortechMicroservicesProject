@@ -1,6 +1,6 @@
 package com.cartservice.repository;
 
-import com.cartservice.model.ShoppingCartProduct;
+import com.shopcommon.model.ShoppingCartProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

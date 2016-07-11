@@ -1,12 +1,12 @@
 package com.userservice.controller;
 
-import com.userservice.model.User;
+import com.shopcommon.model.User;
 import com.userservice.repository.UserRepository;
-import org.springframework.beans.BeanUtils;
+import org.apache.log4j.Logger;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +19,12 @@ import java.util.List;
 @RestController
 public class UserController {
 
+
+    Logger logger = Logger.getLogger(UserController.class);
+
+    @Autowired
+    RabbitTemplate template;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -28,10 +34,10 @@ public class UserController {
         return this.userRepository.findAll();
     }
 
-    @RequestMapping(value = "users/{id}",method= RequestMethod.GET)
-    public User get(@PathVariable Long id){
-        return  userRepository.findOne(id);
-    }
+//    @RequestMapping(value = "users/{id}",method= RequestMethod.GET)
+//    public User get(@PathVariable Long id){
+//        return  userRepository.findOne(id);
+//    }
 
     @RequestMapping(value = "users", method = RequestMethod.POST)
     public User create(@RequestBody User user){
@@ -57,16 +63,25 @@ public class UserController {
 
     }
 
-        @Value("${message}")
-        private String message;
+//        @Value("${message}")
+//        private String message;
+//
+//        @RequestMapping("message")
+//        String getMessage(){
+//            return this.message;
+//    }
 
-        @RequestMapping("message")
-        String getMessage(){
-            return this.message;
+
+    @RequestMapping("users/{id}")
+    public String getUser(@PathVariable("id") Long id){
+
+        User existingUser = userRepository.findOne(id);
+
+        logger.info("Emit to user-queue:" + existingUser);
+        template.convertAndSend(existingUser);
+
+        return "Emit to user-queue";
     }
-
-
-
 
 
 }

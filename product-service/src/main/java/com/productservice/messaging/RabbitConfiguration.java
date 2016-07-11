@@ -7,12 +7,15 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfiguration {
     Logger logger = Logger.getLogger(RabbitConfiguration.class);
+
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory =
@@ -26,18 +29,20 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate() {
-        return new RabbitTemplate(connectionFactory());
+    public MessageConverter jsonMessageConverter(){
+        return new JsonMessageConverter();
     }
 
+    @Bean
+    public RabbitTemplate rabbitTemplate() {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory());
+        template.setRoutingKey("product-queue");
+        template.setMessageConverter(jsonMessageConverter());
+        return template;
+    }
     @Bean
     public Queue myQueue1() {
-        return new Queue("queue1");
-    }
-
-    @Bean
-    public Queue myQueue2() {
-        return new Queue("queue2");
+        return new Queue("product-queue");
     }
 
 }

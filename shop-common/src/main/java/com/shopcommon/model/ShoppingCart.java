@@ -1,4 +1,4 @@
-package com.cartservice.model;
+package com.shopcommon.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +9,7 @@ import java.util.List;
  * Created by Achim Timis on 7/7/2016.
  */
 @Entity
+@Table(schema = "carts")
 public class ShoppingCart implements Serializable {
 
     @Id

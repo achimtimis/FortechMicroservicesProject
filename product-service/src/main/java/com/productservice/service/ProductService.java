@@ -1,7 +1,6 @@
 package com.productservice.service;
-
-import com.productservice.model.Product;
 import com.productservice.repository.ProductRepository;
+import com.shopcommon.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    public List<Product> get(){
+    public List<Product> getAll(){
         return productRepository.findAll();
     }
 

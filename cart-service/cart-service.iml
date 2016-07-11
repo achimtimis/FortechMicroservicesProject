@@ -186,5 +186,6 @@
     <orderEntry type="library" name="Maven: com.github.fge:btf:1.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:2.0.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.postgresql:postgresql:9.4.1208.jre7" level="project" />
+    <orderEntry type="module" module-name="shop-common" />
   </component>
 </module>

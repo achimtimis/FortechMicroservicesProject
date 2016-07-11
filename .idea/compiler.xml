@@ -27,6 +27,7 @@
         <module name="eureka-service" />
         <module name="order-service" />
         <module name="product-service" />
+        <module name="shop-common" />
         <module name="user-service" />
         <module name="zuul-service" />
       </profile>
@@ -35,8 +36,10 @@
       <module name="cart-service" target="1.8" />
       <module name="config-service" target="1.8" />
       <module name="eureka-service" target="1.8" />
+      <module name="FortechMicroservicesProject" target="1.5" />
       <module name="order-service" target="1.8" />
       <module name="product-service" target="1.8" />
+      <module name="shop-common" target="1.8" />
       <module name="user-service" target="1.8" />
       <module name="zuul-service" target="1.8" />
     </bytecodeTargetLevel>

@@ -1,6 +1,7 @@
 package com.orderservice.repository;
 
-import com.orderservice.model.Order;
+
+import com.shopcommon.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

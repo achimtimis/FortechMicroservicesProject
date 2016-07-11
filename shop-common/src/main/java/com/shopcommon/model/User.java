@@ -1,4 +1,4 @@
-package com.userservice.model;
+package com.shopcommon.model;
 
 import javax.persistence.*;
 
@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Created by Achim Timis on 7/6/2016.
  */
 @Entity
-@Table(name="users")
+@Table(name="users", schema = "users")
 public class User {
 
     @Id

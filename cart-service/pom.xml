@@ -72,6 +72,12 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.shopcommon</groupId>
+			<artifactId>shop-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	
 	<dependencyManagement>
@@ -94,6 +100,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
 
 </project>

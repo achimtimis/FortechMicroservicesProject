@@ -1,12 +1,15 @@
 package com.orderservice.controller;
 
-import com.orderservice.model.Order;
-import com.orderservice.model.OrderProduct;
 import com.orderservice.service.OrderService;
+import com.shopcommon.model.Order;
+import com.shopcommon.model.OrderProduct;
+import com.shopcommon.model.Product;
+import com.shopcommon.model.User;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,6 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/orders")
 public class OrderController {
+
+    Logger logger = Logger.getLogger(OrderController.class);
 
     @Autowired
     OrderService orderService;
@@ -52,4 +57,38 @@ public class OrderController {
 
         return orderService.update(order);
     }
+
+    @RequestMapping(value = "/{id}/user", method = RequestMethod.GET)
+    public User getOrderUser(@PathVariable("id") Long id){
+        Order order = orderService.getById(id);
+        try {
+            logger.info("Requested from user-service user from order " +  id);
+
+            User user = orderService.getOrderUser(order.getUserId());
+
+            logger.info("Received from user-service: " +  user);
+
+            return user;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("No user found!");
+        return null;
+    }
+
+
+    @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
+    public List<Product> getOrderProducts(@PathVariable("id") Long id){
+
+        logger.info("Requested from product-service products from order " +  id);
+
+        List<Product> products = orderService.getOrderProducts(id);
+
+        logger.info("Received from product-service " +  products.size() + " products");
+
+        return products;
+    }
+
 }
