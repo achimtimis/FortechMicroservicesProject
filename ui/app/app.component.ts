@@ -5,7 +5,7 @@ import 'rxjs/Rx';  // laod all
 import { ProductService } from './products/product.service';
 import { ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 import { WelcomeComponent } from './home/welcome.component';
-
+import { CartService} from './products/cart.service';
 @Component({
 	selector : 'pm-app',
 	template : `
@@ -25,7 +25,7 @@ import { WelcomeComponent } from './home/welcome.component';
      </div>
 	`,
 	directives: [ROUTER_DIRECTIVES],
-    providers: [ProductService,
+    providers: [ProductService,CartService
                 HTTP_PROVIDERS,
                 ROUTER_PROVIDERS]
 })

@@ -48,6 +48,13 @@ public class Product implements Serializable{
         this.stock = stock;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {
