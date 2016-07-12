@@ -1,0 +1,39 @@
+<div class='panel panel-primary'>
+    <div class='panel-heading'>
+        {{pageTitle}}
+    </div>
+        <div class='table-responsive'>
+            <table class='table' *ngIf='products && products.length'>
+         	<!-- <table class="table"> -->
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor='#product of products'>
+                        <td>
+                            <<!-- img *ngIf='showImage'
+                                 [src]='product.imageUrl'
+                                 [title]='product.productName | uppercase'
+                                 [style.width.px]='imageWidth' 
+                                 [style.margin.px]='imageMargin'> -->
+
+                        <td> 
+                            {{product.id}}
+                            
+                        </td>
+                        <td>{{ product.name | uppercase}}</td>
+                        <td>{{ product.stock}}</td>
+                        <!-- <td>{{ product.price}}</td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+</div>
