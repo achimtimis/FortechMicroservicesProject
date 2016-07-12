@@ -1,3 +1,9 @@
+
+Use "git config --system core.longpaths true" if you get path too long error
+
+
+--------------------------
+
 1) Open a command prompt in the project's root directory (APM - Start)
 
 2) Type: `npm install`
