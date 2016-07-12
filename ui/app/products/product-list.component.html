@@ -1,3 +1,5 @@
+
+{{placeholder}}
 <div class='panel panel-primary'>
     <div class='panel-heading'>
         {{pageTitle}}
@@ -7,33 +9,29 @@
          	<!-- <table class="table"> -->
                 <thead>
                     <tr>
-                        <th>
-                        </th>
                         <th>Id</th>
                         <th>Name</th>
                         <th>Stock</th>
                         <th>Price</th>
+                        <th>Quantity</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor='#product of products'>
                         <td>
-                            <<!-- img *ngIf='showImage'
-                                 [src]='product.imageUrl'
-                                 [title]='product.productName | uppercase'
-                                 [style.width.px]='imageWidth' 
-                                 [style.margin.px]='imageMargin'> -->
-
-                        <td> 
-                            {{product.id}}
-                            
+                            {{product.id}}  
                         </td>
                         <td>{{ product.name | uppercase}}</td>
                         <td>{{ product.stock}}</td>
-                        <!-- <td>{{ product.price}}</td> -->
+                        <td>{{ product.price}}</td>
+                        <td>
+                            <input #quantity type='text' placeholder="quantity"  />
+                        </td>
+                        <td>
+                            <button (click)='addToCart(product.id,quantity.value)'>Add to cart!</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    
 </div>
