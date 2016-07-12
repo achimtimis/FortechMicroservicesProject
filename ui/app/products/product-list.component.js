@@ -1,4 +1,4 @@
-System.register(['angular2/core', './product.service', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './product.service', 'angular2/router', './cart.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './product.service', 'angular2/router'], funct
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, product_service_1, router_1;
+    var core_1, product_service_1, router_1, cart_service_1;
     var ProductListComponent;
     return {
         setters:[
@@ -22,11 +22,15 @@ System.register(['angular2/core', './product.service', 'angular2/router'], funct
             },
             function (router_1_1) {
                 router_1 = router_1_1;
+            },
+            function (cart_service_1_1) {
+                cart_service_1 = cart_service_1_1;
             }],
         execute: function() {
             ProductListComponent = (function () {
-                function ProductListComponent(_productService) {
+                function ProductListComponent(_productService, _cartService) {
                     this._productService = _productService;
+                    this._cartService = _cartService;
                     this.pageTitle = 'Product List';
                     this.showImage = false;
                     this.imageWidth = 50;
@@ -57,7 +61,8 @@ System.register(['angular2/core', './product.service', 'angular2/router'], funct
                 ProductListComponent.prototype.addToCart = function (productId, quantity) {
                     this.placeholder = 'added to cart' + ' ' + productId + ' ' + quantity;
                     alert('added to cart' + ' ' + productId + ' ' + quantity);
-                    this._productService.addToCart(productId, quantity);
+                    // this._productService.addToCart(productId,quantity);
+                    this._cartService.addToCart(productId, quantity);
                 };
                 ProductListComponent = __decorate([
                     core_1.Component({
@@ -65,7 +70,7 @@ System.register(['angular2/core', './product.service', 'angular2/router'], funct
                         templateUrl: 'app/products/product-list.component.html',
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }), 
-                    __metadata('design:paramtypes', [product_service_1.ProductService])
+                    __metadata('design:paramtypes', [product_service_1.ProductService, cart_service_1.CartService])
                 ], ProductListComponent);
                 return ProductListComponent;
             }());

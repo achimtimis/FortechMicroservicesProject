@@ -48,9 +48,10 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     console.error(error);
                     return Observable_1.Observable.throw(error.json().error || 'Server error');
                 };
+                // will not use this
                 ProductService.prototype.addToCart = function (productId, quantity) {
                     alert('in the service.trying to add to cart ' + productId + '/' + quantity);
-                    this._http.put(this._productUrl + '/' + productId + '/' + quantity);
+                    // this._http.put(this._productUrl + '/' + productId + '/'+ quantity);
                 };
                 ProductService = __decorate([
                     core_1.Injectable(), 

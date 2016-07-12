@@ -4,7 +4,7 @@ import { Http, Response } from 'angular2/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-
+import { CartService} from './cart.service';
 import { IProduct } from './product';
 
 @Injectable()
@@ -32,8 +32,9 @@ export class ProductService {
         return Observable.throw(error.json().error || 'Server error');
     }
 
+    // will not use this
     addToCart(productId : number,quantity : number) : void {
          alert('in the service.trying to add to cart ' + productId + '/'+ quantity);
-         this._http.put(this._productUrl + '/' + productId + '/'+ quantity);
+         // this._http.put(this._productUrl + '/' + productId + '/'+ quantity);
     }
 }

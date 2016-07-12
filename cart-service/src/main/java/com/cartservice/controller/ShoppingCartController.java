@@ -396,4 +396,10 @@ public class ShoppingCartController {
     }
 
 
+<<<<<<< c8657b964b695f2941c91ea3ce8434e879d5f5cd
+=======
+
+    // TODO: 7/8/2016  parse all carts and update/delete the given product in them
+    public  void updateProduct(Product p){}
+>>>>>>> added cart-service
 }
