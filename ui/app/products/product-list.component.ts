@@ -1,10 +1,12 @@
 import { Component, OnInit }  from 'angular2/core';
 import { IProduct } from './product';
 import { ProductService } from './product.service';
+import { ROUTER_DIRECTIVES } from 'angular2/router';
 
 @Component({
 	selector:'pm-products',
 	templateUrl: 'app/products/product-list.component.html',
+  directives: [ROUTER_DIRECTIVES]
 })
 
 export class ProductListComponent implements OnInit{
@@ -12,7 +14,8 @@ export class ProductListComponent implements OnInit{
 	showImage: boolean = false;
 	imageWidth : number = 50;
 	imageMargin : number = 2;
-
+  placeholder : string='';
+  quantity : number = 0;
      constructor(private _productService: ProductService) {
 
     }
@@ -40,6 +43,12 @@ export class ProductListComponent implements OnInit{
 
     toggleImage(): void {
         this.showImage = !this.showImage;
+    }
+    addToCart(productId : number,quantity : number){
+      
+      this.placeholder='added to cart' + ' ' +productId + ' ' + quantity ;
+      alert('added to cart' + ' ' +productId + ' ' + quantity);
+      this._productService.addToCart(productId,quantity);
     }
 
 

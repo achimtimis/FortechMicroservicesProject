@@ -31,4 +31,9 @@ export class ProductService {
         console.error(error);
         return Observable.throw(error.json().error || 'Server error');
     }
+
+    addToCart(productId : number,quantity : number) : void {
+         alert('in the service.trying to add to cart ' + productId + '/'+ quantity);
+         this._http.put(this._productUrl + '/' + productId + '/'+ quantity);
+    }
 }
