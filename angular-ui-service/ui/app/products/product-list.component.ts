@@ -32,7 +32,7 @@ export class ProductListComponent implements OnInit{
                      .subscribe(
                        products => this.products = products,
                        error =>  this.errorMessage = <any>error);
-           this._userService.getUser(1)
+           this._userService.getUser2(1)
                      .subscribe(
                         loggedUser => this.loggedUser = loggedUser,
                         error =>  this.errorMessage = <any>error
