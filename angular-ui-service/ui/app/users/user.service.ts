@@ -19,9 +19,14 @@ export class UserService {
             .do(data => console.log('All: ' +  JSON.stringify(data)))
             .catch(this.handleError);
     }
-// 
+
+    getUser2(id:number) : Observable<IUser>{
+        return this._http.get(this._userUrl + '/1')
+                .map((response: Response) => <IUser> response.json())
+                .do(data => console.log('All: ' +  JSON.stringify(data)))
+                .catch(this.handleError);
+    }
     getUser(id: number): Observable<IUser> {
-        // alert('finding user with id' + id);  
         return this.getUsers()
             .map((users: IUser[]) => users.find(u => u.id === id));
     }

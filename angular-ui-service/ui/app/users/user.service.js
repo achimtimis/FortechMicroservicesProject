@@ -37,9 +37,13 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                         .do(function (data) { return console.log('All: ' + JSON.stringify(data)); })
                         .catch(this.handleError);
                 };
-                // 
+                UserService.prototype.getUser2 = function (id) {
+                    return this._http.get(this._userUrl + '/1')
+                        .map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('All: ' + JSON.stringify(data)); })
+                        .catch(this.handleError);
+                };
                 UserService.prototype.getUser = function (id) {
-                    // alert('finding user with id' + id);  
                     return this.getUsers()
                         .map(function (users) { return users.find(function (u) { return u.id === id; }); });
                 };

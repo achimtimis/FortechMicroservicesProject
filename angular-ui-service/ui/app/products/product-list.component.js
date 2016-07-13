@@ -47,7 +47,7 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
                     var _this = this;
                     this._productService.getProducts()
                         .subscribe(function (products) { return _this.products = products; }, function (error) { return _this.errorMessage = error; });
-                    this._userService.getUser(1)
+                    this._userService.getUser2(1)
                         .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
                 };
                 ProductListComponent.prototype.toggleImage = function () {
