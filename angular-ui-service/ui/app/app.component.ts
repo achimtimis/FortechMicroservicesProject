@@ -6,6 +6,7 @@ import { ProductService } from './products/product.service';
 import { ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES } from 'angular2/router';
 import { WelcomeComponent } from './home/welcome.component';
 import { CartService} from './products/cart.service';
+import { UserService} from './users/user.service';
 @Component({
 	selector : 'pm-app',
 	template : `
@@ -25,7 +26,7 @@ import { CartService} from './products/cart.service';
      </div>
 	`,
 	directives: [ROUTER_DIRECTIVES],
-    providers: [ProductService,CartService
+    providers: [ProductService,CartService,UserService,
                 HTTP_PROVIDERS,
                 ROUTER_PROVIDERS]
 })

@@ -3,6 +3,8 @@ import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { ROUTER_DIRECTIVES } from 'angular2/router';
 import {CartService} from './cart.service';
+import { IUser} from '../users/user';
+import { UserService} from '../users/user.service';
 @Component({
 	selector:'pm-products',
 	templateUrl: 'app/products/product-list.component.html',
@@ -15,8 +17,13 @@ export class ProductListComponent implements OnInit{
 	imageWidth : number = 50;
 	imageMargin : number = 2;
   placeholder : string='';
+  errorMessage : string ='';
   quantity : number = 0;
-     constructor(private _productService: ProductService,private _cartService : CartService) {
+  products: IProduct[] ;
+  // = [{ "id" : 1 , "username" : "aaa" , "password" : "abc"}] ;
+  loggedUser: IUser;
+
+     constructor(private _productService: ProductService,private _cartService : CartService,private _userService : UserService) {
 
     }
 
@@ -25,25 +32,18 @@ export class ProductListComponent implements OnInit{
                      .subscribe(
                        products => this.products = products,
                        error =>  this.errorMessage = <any>error);
+           this._userService.getUser(1)
+                     .subscribe(
+                        loggedUser => this.loggedUser = loggedUser,
+                        error =>  this.errorMessage = <any>error
+                       );
     }
 
-	products: IProduct[] ;
- //    {
- //        "id": 1,
- //        "name": "Leaf Rake",
- //        "stock": 13,
- //        "price": 16
- //    },
- //    {
- //        "id": 2,
- //        "name": "Leaf Rake",
- //        "stock": 14,
- //        "price": 16
- //    }];
 
     toggleImage(): void {
         this.showImage = !this.showImage;
     }
+
     addToCart(productId : number,quantity : number){
       
       this.placeholder='added to cart' + ' ' +productId + ' ' + quantity ;

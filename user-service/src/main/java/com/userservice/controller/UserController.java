@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Achim Timis on 7/6/2016.
  */
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RefreshScope
 @RestController
 public class UserController {

@@ -1,4 +1,4 @@
-System.register(['angular2/core', './product.service', 'angular2/router', './cart.service'], function(exports_1, context_1) {
+System.register(['angular2/core', './product.service', 'angular2/router', './cart.service', '../users/user.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, product_service_1, router_1, cart_service_1;
+    var core_1, product_service_1, router_1, cart_service_1, user_service_1;
     var ProductListComponent;
     return {
         setters:[
@@ -25,36 +25,31 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
             },
             function (cart_service_1_1) {
                 cart_service_1 = cart_service_1_1;
+            },
+            function (user_service_1_1) {
+                user_service_1 = user_service_1_1;
             }],
         execute: function() {
             ProductListComponent = (function () {
-                function ProductListComponent(_productService, _cartService) {
+                function ProductListComponent(_productService, _cartService, _userService) {
                     this._productService = _productService;
                     this._cartService = _cartService;
+                    this._userService = _userService;
                     this.pageTitle = 'Product List';
                     this.showImage = false;
                     this.imageWidth = 50;
                     this.imageMargin = 2;
                     this.placeholder = '';
+                    this.errorMessage = '';
                     this.quantity = 0;
                 }
                 ProductListComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this._productService.getProducts()
                         .subscribe(function (products) { return _this.products = products; }, function (error) { return _this.errorMessage = error; });
+                    this._userService.getUser(1)
+                        .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
                 };
-                //    {
-                //        "id": 1,
-                //        "name": "Leaf Rake",
-                //        "stock": 13,
-                //        "price": 16
-                //    },
-                //    {
-                //        "id": 2,
-                //        "name": "Leaf Rake",
-                //        "stock": 14,
-                //        "price": 16
-                //    }];
                 ProductListComponent.prototype.toggleImage = function () {
                     this.showImage = !this.showImage;
                 };
@@ -70,7 +65,7 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
                         templateUrl: 'app/products/product-list.component.html',
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }), 
-                    __metadata('design:paramtypes', [product_service_1.ProductService, cart_service_1.CartService])
+                    __metadata('design:paramtypes', [product_service_1.ProductService, cart_service_1.CartService, user_service_1.UserService])
                 ], ProductListComponent);
                 return ProductListComponent;
             }());
