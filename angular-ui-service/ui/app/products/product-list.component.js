@@ -1,4 +1,4 @@
-System.register(['angular2/core', './product.service', 'angular2/router', './cart.service', '../users/user.service'], function(exports_1, context_1) {
+System.register(['angular2/core', './product.service', 'angular2/router', '../carts/cart.service', '../users/user.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -36,9 +36,6 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
                     this._cartService = _cartService;
                     this._userService = _userService;
                     this.pageTitle = 'Product List';
-                    this.showImage = false;
-                    this.imageWidth = 50;
-                    this.imageMargin = 2;
                     this.placeholder = '';
                     this.errorMessage = '';
                     this.quantity = 0;
