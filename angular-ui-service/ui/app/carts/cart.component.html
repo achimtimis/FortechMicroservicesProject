@@ -1,0 +1,39 @@
+<div class ='panel panel-primary'>
+<div class='panel-heading'>
+        {{pageTitle}} :  Total Cost = $ {{cart?.totalCost}}
+    </div>
+
+	<div class='table-responsive'>
+            <table class='table' *ngIf='cart'>
+                <thead>
+                    <tr>
+                        <th>Cart Id</th>
+                        <th>User Id</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor='#product of cart.productsList'>
+                    	<td>{{cart?.id}}</td>
+                    	<td>{{cart?.userid}}</td>
+                        <td>{{ product.productName}}  </td>
+                        <td>{{ product.quantity}}</td>
+                        
+                        <td>
+                            <button class ="btn btn-danger" (click)='removeFromCart(cart.id,product.id)'>Remove from cart!</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+	
+<div>
+
+
+
+<br>
+<button class="btn btn-success">Check out!</button>
+</div>
+</div>

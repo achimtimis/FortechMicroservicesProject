@@ -4,7 +4,7 @@ import { Http, Response } from 'angular2/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-
+import { ICart,ICartProduct }  from  './cart';
 import { IProduct } from '../products/product';
 
 @Injectable()
@@ -19,4 +19,11 @@ export class CartService {
          //toDo : configure the path
          // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
     }
+    getCartByUserId(userId : number) : Observable <ICart> {
+        return this._http.get(this._cartUrl+'/'+userId)
+            .map((response: Response) => <ICart> response.json())
+            .do(data => console.log('All: ' +  JSON.stringify(data)))
+    
+    }
+
 }
