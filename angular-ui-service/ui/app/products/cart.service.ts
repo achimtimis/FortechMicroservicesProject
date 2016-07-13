@@ -14,8 +14,8 @@ export class CartService {
     constructor(private _http: Http) { }
 
 
-    addToCart(productId : number,quantity : number) : void {
-         alert('in the cart service.trying to add to cart ' + productId + '/'+ quantity);
+    addToCart(userId :number,productId : number,quantity : number) : void {
+         alert('in the cart service.trying to add to cart  of user'+userId + productId + '/'+ quantity);
          //toDo : configure the path
          // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
     }

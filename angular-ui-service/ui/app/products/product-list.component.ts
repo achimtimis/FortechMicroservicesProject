@@ -20,7 +20,6 @@ export class ProductListComponent implements OnInit{
   errorMessage : string ='';
   quantity : number = 0;
   products: IProduct[] ;
-  // = [{ "id" : 1 , "username" : "aaa" , "password" : "abc"}] ;
   loggedUser: IUser;
 
      constructor(private _productService: ProductService,private _cartService : CartService,private _userService : UserService) {
@@ -44,12 +43,12 @@ export class ProductListComponent implements OnInit{
         this.showImage = !this.showImage;
     }
 
-    addToCart(productId : number,quantity : number){
+    addToCart(userId : number,productId : number,quantity : number){
       
-      this.placeholder='added to cart' + ' ' +productId + ' ' + quantity ;
-      alert('added to cart' + ' ' +productId + ' ' + quantity);
+      this.placeholder='added to cart' + ' user id:' +userId +' product id '+productId + ' quantity ' + quantity ;
+      // alert('added to cart' + ' ' +productId + ' ' + quantity);
       // this._productService.addToCart(productId,quantity);
-      this._cartService.addToCart(productId,quantity);
+      this._cartService.addToCart(userId,productId,quantity);
     }
 
 

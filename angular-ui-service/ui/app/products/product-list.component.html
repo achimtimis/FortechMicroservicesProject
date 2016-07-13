@@ -32,7 +32,7 @@
                             <input #quantity type='text' placeholder="quantity"  />
                         </td>
                         <td>
-                            <button (click)='addToCart(product.id,quantity.value)'>Add to cart!</button>
+                            <button (click)='addToCart(loggedUser?.id,product.id,quantity.value)'>Add to cart!</button>
                         </td>
                     </tr>
                 </tbody>
