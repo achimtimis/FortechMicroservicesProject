@@ -28,8 +28,8 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/do', 'rxjs
                     this._http = _http;
                     this._cartUrl = 'http://localhost:8003/carts';
                 }
-                CartService.prototype.addToCart = function (productId, quantity) {
-                    alert('in the cart service.trying to add to cart ' + productId + '/' + quantity);
+                CartService.prototype.addToCart = function (userId, productId, quantity) {
+                    alert('in the cart service.trying to add to cart  of user' + userId + productId + '/' + quantity);
                     //toDo : configure the path
                     // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
                 };

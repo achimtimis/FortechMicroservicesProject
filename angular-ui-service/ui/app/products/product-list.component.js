@@ -53,11 +53,11 @@ System.register(['angular2/core', './product.service', 'angular2/router', './car
                 ProductListComponent.prototype.toggleImage = function () {
                     this.showImage = !this.showImage;
                 };
-                ProductListComponent.prototype.addToCart = function (productId, quantity) {
-                    this.placeholder = 'added to cart' + ' ' + productId + ' ' + quantity;
-                    alert('added to cart' + ' ' + productId + ' ' + quantity);
+                ProductListComponent.prototype.addToCart = function (userId, productId, quantity) {
+                    this.placeholder = 'added to cart' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
+                    // alert('added to cart' + ' ' +productId + ' ' + quantity);
                     // this._productService.addToCart(productId,quantity);
-                    this._cartService.addToCart(productId, quantity);
+                    this._cartService.addToCart(userId, productId, quantity);
                 };
                 ProductListComponent = __decorate([
                     core_1.Component({
