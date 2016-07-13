@@ -17,6 +17,7 @@ import java.util.List;
 
 @RefreshScope
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
 
@@ -29,59 +30,60 @@ public class UserController {
     private UserRepository userRepository;
 
 
-    @RequestMapping(value = "users",method= RequestMethod.GET)
+    @RequestMapping(method= RequestMethod.GET)
     public List<User> findAll(){
-        return this.userRepository.findAll();
+        List<User> users = userRepository.findAll();
+
+        template.convertAndSend("user-queue", users);
+
+        logger.info("Sent " + users.size() + " users via user-queue");
+
+        return users;
     }
 
-//    @RequestMapping(value = "users/{id}",method= RequestMethod.GET)
-//    public User get(@PathVariable Long id){
-//        return  userRepository.findOne(id);
-//    }
+    @RequestMapping(method = RequestMethod.POST)
+    public User create(){
 
-    @RequestMapping(value = "users", method = RequestMethod.POST)
-    public User create(@RequestBody User user){
-        return userRepository.saveAndFlush(user);
+        User user = (User)template.receiveAndConvert("user-queue");
+
+        if(user != null){
+            logger.info("User created: " + user);
+            return userRepository.saveAndFlush(user);
+        }
+        return null;
     }
 
-    @RequestMapping(value = "users/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public User delete(@PathVariable Long id){
         User existingUser=userRepository.findOne(id);
         userRepository.delete(existingUser);
         return existingUser;
     }
 
-    @RequestMapping(value = "users/{id}", method = RequestMethod.PUT)
-    public User update(@PathVariable Long id,@RequestBody User user){
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public User update(@PathVariable Long id){
         User existingUser = userRepository.findOne(id);
-        existingUser.setUsername(user.getUsername());
-        existingUser.setPassword(user.getPassword());
+
+        User newUser = (User)template.receiveAndConvert("user-queue");
+
+        existingUser.setUsername(newUser.getUsername());
+        existingUser.setPassword(newUser.getPassword());
+
         userRepository.save(existingUser);
+
         return existingUser;
-
-
 
     }
 
-//        @Value("${message}")
-//        private String message;
-//
-//        @RequestMapping("message")
-//        String getMessage(){
-//            return this.message;
-//    }
-
-
-    @RequestMapping("users/{id}")
+    @RequestMapping("/{id}")
     public String getUser(@PathVariable("id") Long id){
 
         User existingUser = userRepository.findOne(id);
 
-        logger.info("Emit to user-queue:" + existingUser);
+        logger.info("Emit to user-queue: " + existingUser);
         template.convertAndSend(existingUser);
 
         return "Emit to user-queue";
     }
-
 
 }

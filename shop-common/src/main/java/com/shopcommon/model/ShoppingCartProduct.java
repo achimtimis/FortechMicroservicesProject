@@ -1,6 +1,6 @@
 package com.shopcommon.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ShoppingCartProduct implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
 
@@ -31,6 +31,7 @@ public class ShoppingCartProduct implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id",nullable = true)
     private ShoppingCart shoppingCart;
+
 
     private Long productId;
 

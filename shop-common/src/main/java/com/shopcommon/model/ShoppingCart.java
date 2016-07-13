@@ -13,7 +13,7 @@ import java.util.List;
 public class ShoppingCart implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
     private Long userid;
@@ -31,7 +31,7 @@ public class ShoppingCart implements Serializable {
     }
 
 
-    @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ShoppingCartProduct> productsList=new ArrayList<ShoppingCartProduct>();
 
     public ShoppingCart(Long userid, List<ShoppingCartProduct> productsList) {

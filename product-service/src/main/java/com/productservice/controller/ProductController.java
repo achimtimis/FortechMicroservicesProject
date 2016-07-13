@@ -57,12 +57,11 @@ public class ProductController {
     /**
      * Updates a product received from RabbitMQ
      *
-     * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public Product updateProduct(@PathVariable("id") Long id){
-        Product product = (Product)template.receiveAndConvert();
+    @RequestMapping(method = RequestMethod.PUT)
+    public Product updateProduct(){
+        Product product = (Product)template.receiveAndConvert("product-queue");
 
         logger.info("Received from product-queue: " + product);
         logger.info("Updated product in the database");
@@ -87,13 +86,13 @@ public class ProductController {
 
 
     /**
-     * Sends a requested user via rabbit messaging
+     * Sends a requested product via rabbit messaging
      *
      * @param id
      * @return
      */
     @RequestMapping("/{id}")
-    public String getUser(@PathVariable("id") Long id){
+    public String getProduct(@PathVariable("id") Long id){
 
         Product existingProduct = productService.getById(id);
 
@@ -102,5 +101,6 @@ public class ProductController {
 
         return "Emit to product-queue";
     }
+
 
 }

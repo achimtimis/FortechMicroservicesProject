@@ -1,13 +1,12 @@
 package com.orderservice.messaging;
 
-import org.apache.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.JsonMessageConverter;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +34,7 @@ public class RabbitConfiguration {
 
     @Bean
     public MessageConverter jsonMessageConverter(){
-        return new JsonMessageConverter();
+        return new Jackson2JsonMessageConverter();
     }
 
     @Bean
@@ -44,6 +43,10 @@ public class RabbitConfiguration {
         template.setRoutingKey("order-queue");
         template.setMessageConverter(jsonMessageConverter());
         return template;
+    }
+    @Bean
+    public Queue userQueue() {
+        return new Queue("order-queue", false);
     }
 
 }

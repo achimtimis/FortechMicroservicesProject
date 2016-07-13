@@ -1,5 +1,6 @@
 package com.orderservice.service;
 
+import com.orderservice.repository.OrderProductRepository;
 import com.orderservice.repository.OrderRepository;
 import com.shopcommon.model.Order;
 import com.shopcommon.model.Product;
@@ -20,11 +21,13 @@ import java.util.List;
  */
 @Service
 public class OrderService {
+
     @Autowired
     OrderRepository orderRepository;
 
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    OrderProductRepository orderProductRepository;
+
 
     public List<Order> get(){
         return orderRepository.findAll();
@@ -35,7 +38,13 @@ public class OrderService {
     }
 
     public Order create(Order order){
-        return orderRepository.saveAndFlush(order);
+        Order o = orderRepository.saveAndFlush(order);
+
+        order.getProducts().stream().forEach(orderProduct -> {
+            orderProduct.setOrder(o);
+            orderProductRepository.saveAndFlush(orderProduct);
+        });
+        return o;
     }
 
     public void delete(Long id){
@@ -52,38 +61,5 @@ public class OrderService {
         return null;
     }
 
-    public User getOrderUser(Long id) throws IOException {
 
-        URL obj = new URL("http://localhost:9999/user-service/users/" + id);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        int responseCode = con.getResponseCode();
-
-        return (User)rabbitTemplate.receiveAndConvert("user-queue");
-
-    }
-
-    public List<Product> getOrderProducts(Long id){
-
-        Order order = orderRepository.findOne(id);
-        List<Product> products = new ArrayList<>();
-
-        order.getProducts().forEach(orderProduct -> {
-            try {
-                URL obj = new URL("http://localhost:9999/product-service/products/" + orderProduct.getProductId());
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                con.getResponseCode();
-
-                products.add((Product) rabbitTemplate.receiveAndConvert("product-queue"));
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        });
-
-        return products;
-    }
 }

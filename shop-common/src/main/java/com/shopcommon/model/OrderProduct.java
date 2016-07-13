@@ -15,10 +15,12 @@ import javax.persistence.*;
 public class OrderProduct {
 
     @Id
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
 
     @ManyToOne
     @JoinColumn(name="ORDER_ID")
+    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Order byOrder;
 
     private Long productId;
