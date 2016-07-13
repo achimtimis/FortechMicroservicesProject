@@ -38,6 +38,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                         .catch(this.handleError);
                 };
                 UserService.prototype.getUser2 = function (id) {
+                    this.userId = id;
                     return this._http.get(this._userUrl + '/1')
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('All: ' + JSON.stringify(data)); })
@@ -52,6 +53,9 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     // instead of just logging it to the console
                     console.error(error);
                     return Observable_1.Observable.throw(error.json().error || 'Server error');
+                };
+                UserService.prototype.getUserID = function () {
+                    return this.userId;
                 };
                 UserService = __decorate([
                     core_1.Injectable(), 

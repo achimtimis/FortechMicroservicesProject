@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Achim Timis on 7/7/2016.
  */
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class ShoppingCartController {
 

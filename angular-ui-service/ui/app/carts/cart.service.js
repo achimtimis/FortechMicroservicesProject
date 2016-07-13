@@ -33,6 +33,11 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/do', 'rxjs
                     //toDo : configure the path
                     // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
                 };
+                CartService.prototype.getCartByUserId = function (userId) {
+                    return this._http.get(this._cartUrl + '/' + userId)
+                        .map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('All: ' + JSON.stringify(data)); });
+                };
                 CartService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http])

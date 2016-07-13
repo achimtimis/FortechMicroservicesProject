@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../products/product.service', 'angular2/router', './cart.service', '../users/user.service'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/router', './cart.service', '../users/user.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,15 +10,12 @@ System.register(['angular2/core', '../products/product.service', 'angular2/route
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, product_service_1, router_1, cart_service_1, user_service_1;
+    var core_1, router_1, cart_service_1, user_service_1;
     var CartComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (product_service_1_1) {
-                product_service_1 = product_service_1_1;
             },
             function (router_1_1) {
                 router_1 = router_1_1;
@@ -31,23 +28,18 @@ System.register(['angular2/core', '../products/product.service', 'angular2/route
             }],
         execute: function() {
             CartComponent = (function () {
-                function CartComponent(_productService, _cartService, _userService) {
-                    this._productService = _productService;
+                function CartComponent(_cartService, _userService) {
                     this._cartService = _cartService;
                     this._userService = _userService;
                     this.pageTitle = 'Cart Items';
                     this.placeholder = '';
                     this.size = 0;
+                    this.totalCost = 123;
                 }
                 CartComponent.prototype.ngOnInit = function () {
                     var _this = this;
-                    this._productService.getProducts()
-                        .subscribe(function (products) { return _this.products = products; }, function (error) { return _this.errorMessage = error; });
-                    this._userService.getUser2(1)
-                        .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
-                };
-                CartComponent.prototype.toggleImage = function () {
-                    this.showImage = !this.showImage;
+                    this._cartService.getCartByUserId(this._userService.getUserID())
+                        .subscribe(function (cart) { return _this.cart = cart; }, function (error) { return _this.errorMessage = error; });
                 };
                 CartComponent.prototype.addToCart = function (userId, productId, quantity) {
                     this.placeholder = 'added to cart' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
@@ -55,13 +47,16 @@ System.register(['angular2/core', '../products/product.service', 'angular2/route
                     // this._productService.addToCart(productId,quantity);
                     this._cartService.addToCart(userId, productId, quantity);
                 };
+                CartComponent.prototype.removeFromCart = function (cartId, productId) {
+                    alert("will remove product with id " + productId + " from cart with id " + cartId);
+                };
                 CartComponent = __decorate([
                     core_1.Component({
                         selector: 'pm-carts',
                         templateUrl: 'app/carts/cart.component.html',
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }), 
-                    __metadata('design:paramtypes', [product_service_1.ProductService, cart_service_1.CartService, user_service_1.UserService])
+                    __metadata('design:paramtypes', [cart_service_1.CartService, user_service_1.UserService])
                 ], CartComponent);
                 return CartComponent;
             }());

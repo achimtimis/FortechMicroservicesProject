@@ -5,10 +5,11 @@ import { ROUTER_DIRECTIVES } from 'angular2/router';
 import {CartService} from '../carts/cart.service';
 import { IUser} from '../users/user';
 import { UserService} from '../users/user.service';
+import {CartComponent} from '../carts/cart.component';
 @Component({
 	selector:'pm-products',
 	templateUrl: 'app/products/product-list.component.html',
-  directives: [ROUTER_DIRECTIVES]
+  directives: [ROUTER_DIRECTIVES,CartComponent]
 })
 
 export class ProductListComponent implements OnInit{
@@ -18,6 +19,8 @@ export class ProductListComponent implements OnInit{
   quantity : number = 0;
   products: IProduct[] ;
   loggedUser: IUser;
+  userID : number = 1;
+
 
      constructor(private _productService: ProductService,private _cartService : CartService,private _userService : UserService) {
 
@@ -28,17 +31,16 @@ export class ProductListComponent implements OnInit{
                      .subscribe(
                        products => this.products = products,
                        error =>  this.errorMessage = <any>error);
-           this._userService.getUser2(1)
+           this._userService.getUser2(this.userID)
                      .subscribe(
                         loggedUser => this.loggedUser = loggedUser,
                         error =>  this.errorMessage = <any>error
                        );
+           
     }
 
 
-    toggleImage(): void {
-        this.showImage = !this.showImage;
-    }
+    
 
     addToCart(userId : number,productId : number,quantity : number){
       

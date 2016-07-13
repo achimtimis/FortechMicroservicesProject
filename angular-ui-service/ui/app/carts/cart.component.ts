@@ -5,6 +5,7 @@ import { ROUTER_DIRECTIVES } from 'angular2/router';
 import { CartService } from './cart.service';
 import { IUser } from '../users/user';
 import { UserService } from '../users/user.service';
+import { ICart,ICartProduct} from './cart';
 
 @Component({
 	selector:'pm-carts',
@@ -15,29 +16,26 @@ import { UserService } from '../users/user.service';
 export class CartComponent implements OnInit{
 	pageTitle : string ='Cart Items';
   placeholder : string='';
-  products: IProduct[] ;
+  cart: ICart;
+  errorMessage :string;
   loggedUser: IUser;
   size : number = 0;
-     constructor(private _productService: ProductService,private _cartService : CartService,private _userService : UserService) {
+  totalCost  : number = 123;
+     constructor(private _cartService : CartService,private _userService : UserService) {
 
     }
 
     ngOnInit(): void {
-           this._productService.getProducts()
-                     .subscribe(
-                       products => this.products = products,
+
+            this._cartService.getCartByUserId(this._userService.getUserID())
+                       .subscribe(
+                       cart => this.cart = cart,
                        error =>  this.errorMessage = <any>error);
-           this._userService.getUser2(1)
-                     .subscribe(
-                        loggedUser => this.loggedUser = loggedUser,
-                        error =>  this.errorMessage = <any>error
-                       );
+           
     }
 
 
-    toggleImage(): void {
-        this.showImage = !this.showImage;
-    }
+    
 
     addToCart(userId : number,productId : number,quantity : number){
       
@@ -45,6 +43,9 @@ export class CartComponent implements OnInit{
       // alert('added to cart' + ' ' +productId + ' ' + quantity);
       // this._productService.addToCart(productId,quantity);
       this._cartService.addToCart(userId,productId,quantity);
+    }
+    removeFromCart(cartId : number,productId : number){
+        alert("will remove product with id " + productId +" from cart with id " + cartId);  
     }
 
 
