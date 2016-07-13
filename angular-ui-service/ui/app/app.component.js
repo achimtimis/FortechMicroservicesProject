@@ -1,4 +1,4 @@
-System.register(['angular2/core', './products/product-list.component', 'angular2/http', 'rxjs/Rx', './products/product.service', 'angular2/router', './home/welcome.component', './products/cart.service', './users/user.service'], function(exports_1, context_1) {
+System.register(['angular2/core', './products/product-list.component', 'angular2/http', 'rxjs/Rx', './products/product.service', 'angular2/router', './home/welcome.component', './carts/cart.service', './users/user.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {

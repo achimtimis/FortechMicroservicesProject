@@ -2,6 +2,12 @@
 {{placeholder}}
 <h3>Logged in user : Id:  {{loggedUser?.id}}  name : {{loggedUser?.username}}</h3>
 
+
+<div class ='panel panel-primary'>
+
+
+</div>
+
 <br>
 
 <div class='panel panel-primary'>
@@ -10,7 +16,6 @@
     </div>
         <div class='table-responsive'>
             <table class='table' *ngIf='products && products.length'>
-         	<!-- <table class="table"> -->
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -22,9 +27,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor='#product of products'>
-                        <td>
-                            {{product.id}}  
-                        </td>
+                        <td>{{product.id}}  </td>
                         <td>{{ product.name | uppercase}}</td>
                         <td>{{ product.stock}}</td>
                         <td>{{ product.price}}</td>

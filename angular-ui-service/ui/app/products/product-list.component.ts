@@ -2,7 +2,7 @@ import { Component, OnInit }  from 'angular2/core';
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { ROUTER_DIRECTIVES } from 'angular2/router';
-import {CartService} from './cart.service';
+import {CartService} from '../carts/cart.service';
 import { IUser} from '../users/user';
 import { UserService} from '../users/user.service';
 @Component({
@@ -13,9 +13,6 @@ import { UserService} from '../users/user.service';
 
 export class ProductListComponent implements OnInit{
 	pageTitle : string ='Product List';
-	showImage: boolean = false;
-	imageWidth : number = 50;
-	imageMargin : number = 2;
   placeholder : string='';
   errorMessage : string ='';
   quantity : number = 0;
