@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/do', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/do', 'rxjs/add/operator/catch'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/do', 'rxjs
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1;
+    var core_1, http_1, Observable_1;
     var CartService;
     return {
         setters:[
@@ -20,23 +20,33 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/do', 'rxjs
             function (http_1_1) {
                 http_1 = http_1_1;
             },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+            },
             function (_1) {},
             function (_2) {}],
         execute: function() {
             CartService = (function () {
                 function CartService(_http) {
                     this._http = _http;
-                    this._cartUrl = 'http://localhost:8003/carts';
+                    this._cartUrl = 'http://localhost:9999/api/carts';
                 }
-                CartService.prototype.addToCart = function (userId, productId, quantity) {
-                    alert('in the cart service.trying to add to cart  of user' + userId + productId + '/' + quantity);
-                    //toDo : configure the path
-                    // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
+                CartService.prototype.addToCart = function (cartId, userId, productId, quantity) {
+                    return this._http.put(this._cartUrl + '/' + cartId + "/products?" + "productId=" + productId + "&quantity=" + quantity, null).map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('ShoppingCart Service -> Add Product: -> New Cart: ' + JSON.stringify(data)); })
+                        .catch(this.handleError);
+                    ;
                 };
                 CartService.prototype.getCartByUserId = function (userId) {
                     return this._http.get(this._cartUrl + '/' + userId)
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('All: ' + JSON.stringify(data)); });
+                };
+                CartService.prototype.handleError = function (error) {
+                    // in a real world app, we may send the server to some remote logging infrastructure
+                    // instead of just logging it to the console
+                    console.error(error);
+                    return Observable_1.Observable.throw(error.json().error || 'Server error');
                 };
                 CartService = __decorate([
                     core_1.Injectable(), 

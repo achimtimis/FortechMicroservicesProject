@@ -10,20 +10,27 @@ import { IProduct } from '../products/product';
 @Injectable()
 export class CartService {
    
-    private _cartUrl = 'http://localhost:8003/carts';
+    private _cartUrl = 'http://localhost:9999/api/carts';
     constructor(private _http: Http) { }
 
 
-    addToCart(userId :number,productId : number,quantity : number) : void {
-         alert('in the cart service.trying to add to cart  of user'+userId + productId + '/'+ quantity);
-         //toDo : configure the path
-         // this._http.put(this._cartUrl + '/' + productId + '/'+ quantity);
+    addToCart(cartId:number, userId :number, productId : number, quantity : number) : Observable<ICart> {
+         return this._http.put(this._cartUrl + '/' + cartId + "/products?" + "productId=" + productId + "&quantity=" + quantity, null).map((response: Response) => <IProduct> response.json())
+             .do(data => console.log('ShoppingCart Service -> Add Product: -> New Cart: ' +  JSON.stringify(data)))
+             .catch(this.handleError);;
     }
     getCartByUserId(userId : number) : Observable <ICart> {
         return this._http.get(this._cartUrl+'/'+userId)
             .map((response: Response) => <ICart> response.json())
             .do(data => console.log('All: ' +  JSON.stringify(data)))
     
+    }
+
+    private handleError(error: Response) {
+        // in a real world app, we may send the server to some remote logging infrastructure
+        // instead of just logging it to the console
+        console.error(error);
+        return Observable.throw(error.json().error || 'Server error');
     }
 
 }

@@ -11,7 +11,7 @@ import { IUser } from './user';
 export class UserService {
     
     userId : number;
-    private _userUrl = 'http://localhost:8001/users';
+    private _userUrl = 'http://localhost:9999/api/users';
     constructor(private _http: Http) { }
 
     getUsers(): Observable<IUser[]> {

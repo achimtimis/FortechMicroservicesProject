@@ -7,6 +7,7 @@ import { ROUTER_PROVIDERS, RouteConfig, ROUTER_DIRECTIVES } from 'angular2/route
 import { WelcomeComponent } from './home/welcome.component';
 import { CartService} from './carts/cart.service';
 import { UserService} from './users/user.service';
+import {CartComponent} from "./carts/cart.component";
 @Component({
 	selector : 'pm-app',
 	template : `
@@ -33,7 +34,8 @@ import { UserService} from './users/user.service';
 
 @RouteConfig([
     { path: '/welcome', name: 'Welcome', component: WelcomeComponent, useAsDefault: true },
-    { path: '/products', name: 'Products', component: ProductListComponent }
+    { path: '/products', name: 'Products', component: ProductListComponent },
+    { path: '/cart', name: 'Cart', component: CartComponent }
     // { path: '/product/:id', name: 'ProductDetail', component: ProductDetailComponent }
 ])
 export class AppComponent{

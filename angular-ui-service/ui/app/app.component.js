@@ -1,4 +1,4 @@
-System.register(['angular2/core', './products/product-list.component', 'angular2/http', 'rxjs/Rx', './products/product.service', 'angular2/router', './home/welcome.component', './carts/cart.service', './users/user.service'], function(exports_1, context_1) {
+System.register(['angular2/core', './products/product-list.component', 'angular2/http', 'rxjs/Rx', './products/product.service', 'angular2/router', './home/welcome.component', './carts/cart.service', './users/user.service', "./carts/cart.component"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './products/product-list.component', 'angular2
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, product_list_component_1, http_1, product_service_1, router_1, welcome_component_1, cart_service_1, user_service_1;
+    var core_1, product_list_component_1, http_1, product_service_1, router_1, welcome_component_1, cart_service_1, user_service_1, cart_component_1;
     var AppComponent;
     return {
         setters:[
@@ -38,6 +38,9 @@ System.register(['angular2/core', './products/product-list.component', 'angular2
             },
             function (user_service_1_1) {
                 user_service_1 = user_service_1_1;
+            },
+            function (cart_component_1_1) {
+                cart_component_1 = cart_component_1_1;
             }],
         execute: function() {
             AppComponent = (function () {
@@ -55,7 +58,8 @@ System.register(['angular2/core', './products/product-list.component', 'angular2
                     }),
                     router_1.RouteConfig([
                         { path: '/welcome', name: 'Welcome', component: welcome_component_1.WelcomeComponent, useAsDefault: true },
-                        { path: '/products', name: 'Products', component: product_list_component_1.ProductListComponent }
+                        { path: '/products', name: 'Products', component: product_list_component_1.ProductListComponent },
+                        { path: '/cart', name: 'Cart', component: cart_component_1.CartComponent }
                     ]), 
                     __metadata('design:paramtypes', [])
                 ], AppComponent);

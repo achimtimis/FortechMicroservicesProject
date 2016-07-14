@@ -29,7 +29,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
             UserService = (function () {
                 function UserService(_http) {
                     this._http = _http;
-                    this._userUrl = 'http://localhost:8001/users';
+                    this._userUrl = 'http://localhost:9999/api/users';
                 }
                 UserService.prototype.getUsers = function () {
                     return this._http.get(this._userUrl)

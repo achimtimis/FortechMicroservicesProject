@@ -4,13 +4,12 @@ import { Http, Response } from 'angular2/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-import { CartService} from './cart.service';
 import { IProduct } from './product';
 
 @Injectable()
 export class ProductService {
     // private _productUrl = 'api/products/products.json';
-    private _productUrl = 'http://localhost:8002/products';
+    private _productUrl = 'http://localhost:9999/api/products';
     constructor(private _http: Http) { }
 
     getProducts(): Observable<IProduct[]> {
