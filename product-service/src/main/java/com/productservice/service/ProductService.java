@@ -33,8 +33,13 @@ public class ProductService {
 
     public Product update(Product product){
         if(productRepository.findOne(product.getId()) != null){
-            productRepository.delete(product.getId());
-            return productRepository.save(product);
+            Product productFound=productRepository.findOne(product.getId());
+            System.out.println("Found "+productFound.getStock());
+            productFound.setName(product.getName());
+            productFound.setPrice(product.getPrice());
+            System.out.println(product.getStock());
+            productFound.setStock(product.getStock());
+            return productRepository.save(productFound);
 
         }
 

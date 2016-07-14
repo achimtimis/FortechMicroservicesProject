@@ -52,6 +52,17 @@ public class OrderController {
         return orders;
     }
 
+    @RequestMapping(value = "/user",method = RequestMethod.GET)
+    public Order getOrderByUser(@RequestParam(name = "id") Long id){
+        Order order = orderService.getByUserId(id);
+
+        rabbitTemplate.convertAndSend("order-queue", order);
+
+
+
+        return order;
+    }
+
     /**
      * Find an order with a spefic id
      *
@@ -97,6 +108,7 @@ public class OrderController {
         logger.info("Order with id " + id + " was deleted");
         orderService.delete(id);
     }
+
 
 
     /**

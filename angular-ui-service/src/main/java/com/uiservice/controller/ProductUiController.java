@@ -2,6 +2,7 @@ package com.uiservice.controller;
 
 import com.shopcommon.model.Product;
 import org.apache.log4j.Logger;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,11 +23,14 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/api/products")
+@RequestMapping(value = "/api/products")
 public class ProductUiController {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    RabbitAdmin rabbitAdmin;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getAllProducts(){
@@ -35,6 +39,8 @@ public class ProductUiController {
         List<Product> products = new ArrayList<>();
 
         try {
+            rabbitAdmin.purgeQueue("product-queue", false);
+
             URL obj = new URL("http://localhost:9999/product-service/products");
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.getResponseCode();

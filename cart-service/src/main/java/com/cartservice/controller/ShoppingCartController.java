@@ -115,8 +115,12 @@ public class ShoppingCartController {
 }
 
     @RequestMapping(value = "/user/{id}",method=RequestMethod.GET)
-    public List<ShoppingCart> findShoppingCartByUserid(@PathVariable Long id){
-        return this.shoppingCartRepository.findByUserid(id);
+    public ShoppingCart findShoppingCartByUserid(@PathVariable Long id){
+        ShoppingCart cart = this.shoppingCartRepository.findByUserid(id);
+        logger.info("Sent over cart-queue cart: " + cart);
+        rabbitTemplate.convertAndSend("cart-queue",cart);
+
+        return cart;
     }
 
     /**
@@ -228,6 +232,8 @@ public class ShoppingCartController {
     public ShoppingCart removeProductFromShoppingCart(@PathVariable("id") Long id, @RequestParam(value = "productId") Long productId){
         Product product = this.receiveProduct(productId);
 
+        logger.info("Deleted from shopping cart product with id:" + productId);
+
         if(product != null){
             ShoppingCart shoppingCart = this.shoppingCartRepository.findOne(id);
 
@@ -278,6 +284,7 @@ public class ShoppingCartController {
             orderProducts.add(op);
         });
         order.setProducts(orderProducts);
+
 
         sendOrder(order);
 
@@ -352,7 +359,7 @@ public class ShoppingCartController {
         logger.info("Sent to order-service order:" +  order);
 
         try {
-            url = new URL("http://localhost:9999/order-service/orders");
+            url = new URL("http://localhost:9999/orders");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.getResponseCode();

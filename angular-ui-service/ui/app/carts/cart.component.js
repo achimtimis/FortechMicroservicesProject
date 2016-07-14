@@ -45,10 +45,18 @@ System.register(['angular2/core', 'angular2/router', './cart.service', '../users
                     this.placeholder = 'added to cart' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
                     // alert('added to cart' + ' ' +productId + ' ' + quantity);
                     // this._productService.addToCart(productId,quantity);
+                    alert('aa');
                     this._cartService.addToCart(userId, productId, quantity);
+                    // location.reload();
                 };
                 CartComponent.prototype.removeFromCart = function (cartId, productId) {
                     alert("will remove product with id " + productId + " from cart with id " + cartId);
+                    this._cartService.removeFromCart(cartId, productId);
+                    location.reload();
+                };
+                CartComponent.prototype.checkout = function (cartId) {
+                    alert("checking out cart  " + cartId);
+                    this._cartService.checkout(cartId);
                 };
                 CartComponent = __decorate([
                     core_1.Component({

@@ -13,11 +13,17 @@ export class CartService {
     private _cartUrl = 'http://localhost:9999/api/carts';
     constructor(private _http: Http) { }
 
+    getCartId(userId : number) : void {}
 
-    addToCart(cartId:number, userId :number, productId : number, quantity : number) : Observable<ICart> {
-         return this._http.put(this._cartUrl + '/' + cartId + "/products?" + "productId=" + productId + "&quantity=" + quantity, null).map((response: Response) => <IProduct> response.json())
+    addToCart(userId :number, productId : number, quantity : number) : void{
+
+          this._http.get(this._cartUrl + "/user/" + userId + "/products?" + "productId=" + productId + "&quantity=" + quantity)
+             .map((response: Response) => <ICart> response.json())
              .do(data => console.log('ShoppingCart Service -> Add Product: -> New Cart: ' +  JSON.stringify(data)))
-             .catch(this.handleError);;
+             .catch(this.handleError)
+             .subscribe((res) => {
+                });
+             location.reload();
     }
     getCartByUserId(userId : number) : Observable <ICart> {
         return this._http.get(this._cartUrl+'/'+userId)
@@ -31,6 +37,26 @@ export class CartService {
         // instead of just logging it to the console
         console.error(error);
         return Observable.throw(error.json().error || 'Server error');
+    }
+
+
+    removeFromCart(cartId : number,productId:number) : void {
+        alert (cartId + ' '+productId);
+        this._http.get(this._cartUrl + '/' + cartId + "/products/" + productId)
+                .map((response: Response) => <ICart> response.json())
+                 .do(data => console.log('ShoppingCart Service -> delete Product: -> New Cart: ' +  JSON.stringify(data)))
+                 .catch(this.handleError)
+                .subscribe((res) => {
+                });
+    }
+
+    checkout(cartId : number) : void {
+        this._http.get(this._cartUrl + '/' + cartId + "/order")
+                .map((response: Response) => <ICart> response.json())
+                 .do(data => console.log('ShoppingCart Service -> order'))
+                 .catch(this.handleError)
+                .subscribe((res) => {
+                });
     }
 
 }

@@ -12,5 +12,5 @@ import java.util.List;
 @Transactional
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart,Long> {
 
-    List<ShoppingCart> findByUserid(Long userid);
+    ShoppingCart findByUserid(Long userid);
 }

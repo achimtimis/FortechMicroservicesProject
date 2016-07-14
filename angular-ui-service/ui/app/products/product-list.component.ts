@@ -42,12 +42,19 @@ export class ProductListComponent implements OnInit{
 
     
 
-    addToCart(userId : number,productId : number,quantity : number){
-      
-      this.placeholder='added to cart' + ' user id:' +userId +' product id '+productId + ' quantity ' + quantity ;
+    addToCart(userId : number,productId : number,quantity : number,stock : number){
+      if (stock < quantity || stock <= 0){
+        this.errorMessage='Quantity exceedes the stock or the item is sold out';
+        
+      }
+      else{
+        this.errorMessage='';
+        this.placeholder='added to cart  '  + ' user id:' +userId +' product id '+productId + ' quantity ' + quantity ;
       // alert('added to cart' + ' ' +productId + ' ' + quantity);
       // this._productService.addToCart(productId,quantity);
-      this._cartService.addToCart(userId,productId,quantity);
+        this._cartService.addToCart(userId,productId,quantity);
+      }
+      
     }
 
 

@@ -20,7 +20,9 @@ export class CartComponent implements OnInit{
   errorMessage :string;
   loggedUser: IUser;
   size : number = 0;
+  deletedCart : ICart;
   totalCost  : number = 123;
+
      constructor(private _cartService : CartService,private _userService : UserService) {
 
     }
@@ -31,6 +33,7 @@ export class CartComponent implements OnInit{
                        .subscribe(
                        cart => this.cart = cart,
                        error =>  this.errorMessage = <any>error);
+
            
     }
 
@@ -42,10 +45,19 @@ export class CartComponent implements OnInit{
       this.placeholder='added to cart' + ' user id:' +userId +' product id '+productId + ' quantity ' + quantity ;
       // alert('added to cart' + ' ' +productId + ' ' + quantity);
       // this._productService.addToCart(productId,quantity);
+      alert('aa');
       this._cartService.addToCart(userId,productId,quantity);
+
+      // location.reload();
     }
     removeFromCart(cartId : number,productId : number){
-        alert("will remove product with id " + productId +" from cart with id " + cartId);  
+        alert("will remove product with id " + productId +" from cart with id " + cartId); 
+        this._cartService.removeFromCart(cartId,productId);
+        location.reload();
+    }
+    checkout (cartId : number) : void {
+       alert("checking out cart  " + cartId); 
+       this._cartService.checkout(cartId);
     }
 
 

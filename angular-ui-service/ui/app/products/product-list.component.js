@@ -51,11 +51,17 @@ System.register(['angular2/core', './product.service', 'angular2/router', '../ca
                     this._userService.getUser2(this.userID)
                         .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
                 };
-                ProductListComponent.prototype.addToCart = function (userId, productId, quantity) {
-                    this.placeholder = 'added to cart' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
-                    // alert('added to cart' + ' ' +productId + ' ' + quantity);
-                    // this._productService.addToCart(productId,quantity);
-                    this._cartService.addToCart(userId, productId, quantity);
+                ProductListComponent.prototype.addToCart = function (userId, productId, quantity, stock) {
+                    if (stock < quantity || stock <= 0) {
+                        this.errorMessage = 'Quantity exceedes the stock or the item is sold out';
+                    }
+                    else {
+                        this.errorMessage = '';
+                        this.placeholder = 'added to cart  ' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
+                        // alert('added to cart' + ' ' +productId + ' ' + quantity);
+                        // this._productService.addToCart(productId,quantity);
+                        this._cartService.addToCart(userId, productId, quantity);
+                    }
                 };
                 ProductListComponent = __decorate([
                     core_1.Component({

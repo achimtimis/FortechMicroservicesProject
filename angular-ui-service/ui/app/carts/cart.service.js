@@ -31,11 +31,15 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     this._http = _http;
                     this._cartUrl = 'http://localhost:9999/api/carts';
                 }
-                CartService.prototype.addToCart = function (cartId, userId, productId, quantity) {
-                    return this._http.put(this._cartUrl + '/' + cartId + "/products?" + "productId=" + productId + "&quantity=" + quantity, null).map(function (response) { return response.json(); })
+                CartService.prototype.getCartId = function (userId) { };
+                CartService.prototype.addToCart = function (userId, productId, quantity) {
+                    this._http.get(this._cartUrl + "/user/" + userId + "/products?" + "productId=" + productId + "&quantity=" + quantity)
+                        .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('ShoppingCart Service -> Add Product: -> New Cart: ' + JSON.stringify(data)); })
-                        .catch(this.handleError);
-                    ;
+                        .catch(this.handleError)
+                        .subscribe(function (res) {
+                    });
+                    location.reload();
                 };
                 CartService.prototype.getCartByUserId = function (userId) {
                     return this._http.get(this._cartUrl + '/' + userId)
@@ -47,6 +51,23 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     // instead of just logging it to the console
                     console.error(error);
                     return Observable_1.Observable.throw(error.json().error || 'Server error');
+                };
+                CartService.prototype.removeFromCart = function (cartId, productId) {
+                    alert(cartId + ' ' + productId);
+                    this._http.get(this._cartUrl + '/' + cartId + "/products/" + productId)
+                        .map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('ShoppingCart Service -> delete Product: -> New Cart: ' + JSON.stringify(data)); })
+                        .catch(this.handleError)
+                        .subscribe(function (res) {
+                    });
+                };
+                CartService.prototype.checkout = function (cartId) {
+                    this._http.get(this._cartUrl + '/' + cartId + "/order")
+                        .map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('ShoppingCart Service -> order'); })
+                        .catch(this.handleError)
+                        .subscribe(function (res) {
+                    });
                 };
                 CartService = __decorate([
                     core_1.Injectable(), 

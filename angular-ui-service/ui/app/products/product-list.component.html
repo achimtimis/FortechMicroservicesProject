@@ -5,6 +5,8 @@
 
 <pm-carts></pm-carts>
 
+
+<h2>{{errorMessage}}</h2>
 <br>
 
 <div class='panel panel-primary'>
@@ -32,7 +34,7 @@
                             <input #quantity type='text' placeholder="quantity"  />
                         </td>
                         <td>
-                            <button (click)='addToCart(loggedUser?.id,product.id,quantity.value)'>Add to cart!</button>
+                            <button (click)='addToCart(loggedUser?.id,product.id,quantity.value,product.stock)'>Add to cart!</button>
                         </td>
                     </tr>
                 </tbody>

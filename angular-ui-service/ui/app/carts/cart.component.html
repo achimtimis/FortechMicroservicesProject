@@ -7,7 +7,7 @@
             <table class='table' *ngIf='cart'>
                 <thead>
                     <tr>
-                        <th>Cart Id</th>
+                        <th>Product Id</th>
                         <th>User Id</th>
                         <th>Product Name</th>
                         <th>Quantity</th>
@@ -17,13 +17,13 @@
                 <tbody>
 
                     <tr *ngFor='#product of cart.productsList'>
-                    	<td>{{cart?.id}}</td>
+                    	<td>{{product?.productId}}</td>
                     	<td>{{cart?.userid}}</td>
                         <td>{{ product.productName}}  </td>
                         <td>{{ product.quantity}}</td>
                         
                         <td>
-                            <button class ="btn btn-danger" (click)='removeFromCart(cart.id,product.id)'>Remove from cart!</button>
+                            <button class ="btn btn-danger" (click)='removeFromCart(cart.id,product.productId)'>Remove from cart!</button>
                         </td>
                     </tr>
                 </tbody>
@@ -34,6 +34,7 @@
 
 
 <br>
-<button class="btn btn-success">Check out!</button>
+<button class ="btn btn-success" (click)='checkout(cart?.id)'>Check Out!</button>
 </div>
 </div>
+
