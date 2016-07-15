@@ -5,6 +5,7 @@ import com.shopcommon.model.ShoppingCart;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -54,6 +55,13 @@ public class CartUiController {
         return cart;
     }
 
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    public ShoppingCart getShoppingCartByUserId(@PathVariable("id") Long id){
+        ShoppingCart cart = receiveShoppingCartByUserId(id);
+
+        return cart;
+    }
+
     @RequestMapping(value = "/{cid}/products/{pid}",method= RequestMethod.GET)
     public ShoppingCart removeProduct(@PathVariable Long cid,@PathVariable Long pid){
         ShoppingCart shoppingCart = receiveShoppingCartById(cid);
@@ -80,13 +88,13 @@ public class CartUiController {
         return shoppingCart;
     }
 
-    @RequestMapping(value = "user/{id}/products", method = RequestMethod.GET)
-    public ShoppingCart addProductToShoppingCart(@PathVariable("id") Long id, @RequestParam(value = "productId") Long productId,@RequestParam(value = "quantity") int quantity){
+    @RequestMapping(value = "user/{userId}/products", method = RequestMethod.GET)
+    public ShoppingCart addProductToShoppingCart(@PathVariable("userId") Long userId, @RequestParam(value = "productId") Long productId,@RequestParam(value = "quantity") int quantity){
         ShoppingCart shoppingCart = null;
 
 
         try {
-            URL obj2 = new URL("http://localhost:9999/carts/user/" + id);
+            URL obj2 = new URL("http://localhost:9999/carts/user/" + userId);
             HttpURLConnection con2 = (HttpURLConnection) obj2.openConnection();
             con2.setRequestMethod("GET");
             con2.getResponseCode();
@@ -100,7 +108,7 @@ public class CartUiController {
             con.setRequestMethod("POST");
             con.getResponseCode();
 
-            URL obj3 = new URL("http://localhost:9999/carts/" + id);
+            URL obj3 = new URL("http://localhost:9999/carts/user/" + userId);
             HttpURLConnection con3 = (HttpURLConnection) obj3.openConnection();
             con3.setRequestMethod("GET");
             con3.getResponseCode();
@@ -117,8 +125,8 @@ public class CartUiController {
     }
 
     @RequestMapping(value = "/{id}/order", method = RequestMethod.GET)
-    public Order checkout(@PathVariable("id") Long id){
-        Order order=  null;
+    public List<Order> checkout(@PathVariable("id") Long id){
+        List<Order> order=  null;
 
         try {
             URL obj = new URL("http://localhost:9999/carts/" + id);
@@ -140,7 +148,7 @@ public class CartUiController {
             con3.setRequestMethod("GET");
             con3.getResponseCode();
 
-             order = (Order)rabbitTemplate.receiveAndConvert("order-queue");
+             order = (List<Order>)rabbitTemplate.receiveAndConvert("order-queue");
 
             logger.info("Received from order-queue order:" + order);
 
@@ -154,12 +162,59 @@ public class CartUiController {
         return order;
     }
 
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public ShoppingCart newShoppingCart(@Validated @RequestParam("userId") Long userId){
+        ShoppingCart shoppingCart = null;
+        try {
+            URL obj = new URL("http://localhost:9999/carts/user/" + userId);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.getResponseCode();
+
+            URL obj2 = new URL("http://localhost:9999/carts/user/" + userId);
+            HttpURLConnection con2 = (HttpURLConnection) obj2.openConnection();
+            con2.setRequestMethod("GET");
+            con2.getResponseCode();
+
+
+            shoppingCart = (ShoppingCart)rabbitTemplate.receiveAndConvert("cart-queue");
+
+
+            logger.info("Shopping cart created: " + shoppingCart);
+
+        } catch (MalformedURLException e) {
+            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return shoppingCart;
+    }
 
     private ShoppingCart receiveShoppingCartById(Long id){
         ShoppingCart cart = null;
 
         try {
             URL obj = new URL("http://localhost:9999/carts/" + id);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.getResponseCode();
+
+            cart = (ShoppingCart) rabbitTemplate.receiveAndConvert("cart-queue");
+
+        } catch (MalformedURLException e) {
+            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+        return cart;
+    }
+
+    private ShoppingCart receiveShoppingCartByUserId(Long id){
+        ShoppingCart cart = null;
+
+        try {
+            URL obj = new URL("http://localhost:9999/carts/user/" + id);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.getResponseCode();
 

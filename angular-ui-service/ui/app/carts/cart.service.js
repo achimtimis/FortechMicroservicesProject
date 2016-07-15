@@ -42,7 +42,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     location.reload();
                 };
                 CartService.prototype.getCartByUserId = function (userId) {
-                    return this._http.get(this._cartUrl + '/' + userId)
+                    return this._http.get(this._cartUrl + '/user/' + userId)
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('All: ' + JSON.stringify(data)); });
                 };
@@ -53,13 +53,13 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                     return Observable_1.Observable.throw(error.json().error || 'Server error');
                 };
                 CartService.prototype.removeFromCart = function (cartId, productId) {
-                    alert(cartId + ' ' + productId);
                     this._http.get(this._cartUrl + '/' + cartId + "/products/" + productId)
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('ShoppingCart Service -> delete Product: -> New Cart: ' + JSON.stringify(data)); })
                         .catch(this.handleError)
                         .subscribe(function (res) {
                     });
+                    location.reload();
                 };
                 CartService.prototype.checkout = function (cartId) {
                     this._http.get(this._cartUrl + '/' + cartId + "/order")
@@ -68,6 +68,17 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                         .catch(this.handleError)
                         .subscribe(function (res) {
                     });
+                    location.reload();
+                };
+                CartService.prototype.newCart = function (userId) {
+                    console.log("CartService  -> New Cart");
+                    this._http.get(this._cartUrl + "/new?userId=" + userId)
+                        .map(function (response) { return response.json(); })
+                        .do(function (data) { return console.log('ShoppingCart Service -> Create New Cart: -> New Cart: ' + JSON.stringify(data)); })
+                        .catch(this.handleError)
+                        .subscribe(function (res) {
+                    });
+                    location.reload();
                 };
                 CartService = __decorate([
                     core_1.Injectable(), 

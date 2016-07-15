@@ -41,6 +41,7 @@ System.register(['angular2/core', './product.service', 'angular2/router', '../ca
                     this.pageTitle = 'Product List';
                     this.placeholder = '';
                     this.errorMessage = '';
+                    this.stockMessage = '';
                     this.quantity = 0;
                     this.userID = 1;
                 }
@@ -50,24 +51,30 @@ System.register(['angular2/core', './product.service', 'angular2/router', '../ca
                         .subscribe(function (products) { return _this.products = products; }, function (error) { return _this.errorMessage = error; });
                     this._userService.getUser2(this.userID)
                         .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
+                    this._cartService.getCartByUserId(this._userService.getUserID())
+                        .subscribe(function (cart) { return _this.cart = cart; }, function (error) { return _this.errorMessage = error; });
                 };
                 ProductListComponent.prototype.addToCart = function (userId, productId, quantity, stock) {
                     if (stock < quantity || stock <= 0) {
-                        this.errorMessage = 'Quantity exceedes the stock or the item is sold out';
+                        this.stockMessage = 'Not enough products on stock!';
                     }
                     else {
-                        this.errorMessage = '';
+                        this.stockMessage = '';
                         this.placeholder = 'added to cart  ' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
                         // alert('added to cart' + ' ' +productId + ' ' + quantity);
                         // this._productService.addToCart(productId,quantity);
                         this._cartService.addToCart(userId, productId, quantity);
                     }
                 };
+                ProductListComponent.prototype.cartExists = function () {
+                    return this.cart == null;
+                };
                 ProductListComponent = __decorate([
                     core_1.Component({
                         selector: 'pm-products',
                         templateUrl: 'app/products/product-list.component.html',
-                        directives: [router_1.ROUTER_DIRECTIVES, cart_component_1.CartComponent]
+                        directives: [router_1.ROUTER_DIRECTIVES, cart_component_1.CartComponent],
+                        providers: [cart_component_1.CartComponent]
                     }), 
                     __metadata('design:paramtypes', [product_service_1.ProductService, cart_service_1.CartService, user_service_1.UserService])
                 ], ProductListComponent);

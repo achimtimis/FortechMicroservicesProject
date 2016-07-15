@@ -26,7 +26,7 @@ export class CartService {
              location.reload();
     }
     getCartByUserId(userId : number) : Observable <ICart> {
-        return this._http.get(this._cartUrl+'/'+userId)
+        return this._http.get(this._cartUrl+'/user/'+userId)
             .map((response: Response) => <ICart> response.json())
             .do(data => console.log('All: ' +  JSON.stringify(data)))
     
@@ -41,13 +41,13 @@ export class CartService {
 
 
     removeFromCart(cartId : number,productId:number) : void {
-        alert (cartId + ' '+productId);
         this._http.get(this._cartUrl + '/' + cartId + "/products/" + productId)
                 .map((response: Response) => <ICart> response.json())
                  .do(data => console.log('ShoppingCart Service -> delete Product: -> New Cart: ' +  JSON.stringify(data)))
                  .catch(this.handleError)
                 .subscribe((res) => {
                 });
+        location.reload();
     }
 
     checkout(cartId : number) : void {
@@ -57,6 +57,20 @@ export class CartService {
                  .catch(this.handleError)
                 .subscribe((res) => {
                 });
+
+        location.reload();
+    }
+    
+    newCart(userId : number) : void{
+        console.log("CartService  -> New Cart")
+        this._http.get(this._cartUrl + "/new?userId=" + userId)
+            .map((response: Response) => <ICart> response.json())
+            .do(data => console.log('ShoppingCart Service -> Create New Cart: -> New Cart: ' +  JSON.stringify(data)))
+            .catch(this.handleError)
+            .subscribe((res) => {
+            });
+
+        location.reload();
     }
 
 }

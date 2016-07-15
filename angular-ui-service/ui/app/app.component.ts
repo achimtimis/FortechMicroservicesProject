@@ -8,6 +8,9 @@ import { WelcomeComponent } from './home/welcome.component';
 import { CartService} from './carts/cart.service';
 import { UserService} from './users/user.service';
 import {CartComponent} from "./carts/cart.component";
+import {OrderComponent} from "./order/order.component";
+import {OrderService} from "./order/order.service";
+import {ProductManagementComponent} from "./products/product-management.component";
 @Component({
 	selector : 'pm-app',
 	template : `
@@ -18,6 +21,8 @@ import {CartComponent} from "./carts/cart.component";
                 <ul class='nav navbar-nav'>
                     <li><a [routerLink]="['Welcome']">Home</a></li>
                     <li><a [routerLink]="['Products']">Product List</a></li>
+                    <li><a [routerLink]="['Order']">Order</a></li>
+                    <li><a [routerLink]="['ProductsManagement']">Product Management</a></li>
                 </ul>
             </div>
         </nav>
@@ -27,7 +32,7 @@ import {CartComponent} from "./carts/cart.component";
      </div>
 	`,
 	directives: [ROUTER_DIRECTIVES],
-    providers: [ProductService,CartService,UserService,
+    providers: [ProductService,CartService,UserService,OrderService,
                 HTTP_PROVIDERS,
                 ROUTER_PROVIDERS]
 })
@@ -35,7 +40,9 @@ import {CartComponent} from "./carts/cart.component";
 @RouteConfig([
     { path: '/welcome', name: 'Welcome', component: WelcomeComponent, useAsDefault: true },
     { path: '/products', name: 'Products', component: ProductListComponent },
-    { path: '/cart', name: 'Cart', component: CartComponent }
+    { path: '/products/management', name: 'ProductsManagement', component: ProductManagementComponent },
+    { path: '/cart', name: 'Cart', component: CartComponent },
+    { path: '/order', name: 'Order', component: OrderComponent }
     // { path: '/product/:id', name: 'ProductDetail', component: ProductDetailComponent }
 ])
 export class AppComponent{

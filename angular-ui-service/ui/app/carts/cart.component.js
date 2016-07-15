@@ -40,23 +40,38 @@ System.register(['angular2/core', 'angular2/router', './cart.service', '../users
                     var _this = this;
                     this._cartService.getCartByUserId(this._userService.getUserID())
                         .subscribe(function (cart) { return _this.cart = cart; }, function (error) { return _this.errorMessage = error; });
+                    this.loggedUserId = this._userService.getUserID();
+                    console.log("Logged in user id: " + this.loggedUserId);
                 };
                 CartComponent.prototype.addToCart = function (userId, productId, quantity) {
                     this.placeholder = 'added to cart' + ' user id:' + userId + ' product id ' + productId + ' quantity ' + quantity;
-                    // alert('added to cart' + ' ' +productId + ' ' + quantity);
                     // this._productService.addToCart(productId,quantity);
-                    alert('aa');
                     this._cartService.addToCart(userId, productId, quantity);
                     // location.reload();
                 };
                 CartComponent.prototype.removeFromCart = function (cartId, productId) {
-                    alert("will remove product with id " + productId + " from cart with id " + cartId);
                     this._cartService.removeFromCart(cartId, productId);
                     location.reload();
                 };
                 CartComponent.prototype.checkout = function (cartId) {
-                    alert("checking out cart  " + cartId);
                     this._cartService.checkout(cartId);
+                };
+                CartComponent.prototype.newCart = function () {
+                    console.log("CartComponent -> New Cart");
+                    this._cartService.newCart(this.loggedUserId);
+                };
+                CartComponent.prototype.cartExists = function () {
+                    if (this.cart != null) {
+                        return true;
+                    }
+                    return false;
+                };
+                CartComponent.prototype.cartHasProducts = function () {
+                    if (this.cart.productsList.length > 0) {
+                        return true;
+                    }
+                    else
+                        return false;
                 };
                 CartComponent = __decorate([
                     core_1.Component({

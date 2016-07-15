@@ -1,11 +1,10 @@
 import { Component, OnInit }  from 'angular2/core';
-import { IProduct } from '../products/product';
-import { ProductService } from '../products/product.service';
 import { ROUTER_DIRECTIVES } from 'angular2/router';
 import { CartService } from './cart.service';
 import { IUser } from '../users/user';
 import { UserService } from '../users/user.service';
 import { ICart,ICartProduct} from './cart';
+import {$r} from "angular2/src/compiler/chars";
 
 @Component({
 	selector:'pm-carts',
@@ -18,7 +17,7 @@ export class CartComponent implements OnInit{
   placeholder : string='';
   cart: ICart;
   errorMessage :string;
-  loggedUser: IUser;
+  loggedUserId: number;
   size : number = 0;
   deletedCart : ICart;
   totalCost  : number = 123;
@@ -33,8 +32,8 @@ export class CartComponent implements OnInit{
                        .subscribe(
                        cart => this.cart = cart,
                        error =>  this.errorMessage = <any>error);
-
-           
+            this.loggedUserId = this._userService.getUserID();
+            console.log("Logged in user id: " + this.loggedUserId);
     }
 
 
@@ -43,22 +42,37 @@ export class CartComponent implements OnInit{
     addToCart(userId : number,productId : number,quantity : number){
       
       this.placeholder='added to cart' + ' user id:' +userId +' product id '+productId + ' quantity ' + quantity ;
-      // alert('added to cart' + ' ' +productId + ' ' + quantity);
       // this._productService.addToCart(productId,quantity);
-      alert('aa');
       this._cartService.addToCart(userId,productId,quantity);
 
       // location.reload();
     }
     removeFromCart(cartId : number,productId : number){
-        alert("will remove product with id " + productId +" from cart with id " + cartId); 
         this._cartService.removeFromCart(cartId,productId);
         location.reload();
     }
     checkout (cartId : number) : void {
-       alert("checking out cart  " + cartId); 
        this._cartService.checkout(cartId);
     }
+    
+    newCart(){
+        console.log("CartComponent -> New Cart")
+        this._cartService.newCart(this.loggedUserId);
+    }
 
+    cartExists() : boolean{
+        if(this.cart != null){
+            return true;
+        }
+
+        return false;
+    }
+    
+    cartHasProducts() : boolean{
+        if(this.cart.productsList.length > 0){
+            return true;
+        }
+        else return false;
+    }
 
 }

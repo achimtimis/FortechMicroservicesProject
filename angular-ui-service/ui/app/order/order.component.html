@@ -1,0 +1,47 @@
+<style>
+    td{
+        border-bottom-color: #337AB7;
+    }
+
+    th{
+        text-align: center;
+    }
+
+
+</style>
+
+<div class ='panel panel-primary' style="text-align:center; ">
+    <div class='panel-heading' style="text-align: left;">
+        {{pageTitle}}
+    </div>
+    <div class='table-responsive'>
+        <table class='table' *ngIf='orders' >
+            <table class='table' *ngFor='#order of orders'>
+                <table class='table' *ngIf='order'>
+
+                    <thead>
+                    <th style="background-color: #337AB7"></th><div style=" color:white; background-color: #337AB7; font-size: 22px;">
+                        Order Id: {{order?.id}}
+                    </div><th style="background-color: #337AB7"></th>
+                        <tr style="border-style:none;">
+
+                            <th>Product Id</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+
+                        </tr>
+                    </thead>
+                    <tbody >
+
+                        <tr *ngFor='#product of order.products'>
+                            <td>{{ product.productId}}</td>
+                            <td>{{ product.productName}}  </td>
+                            <td>{{ product.quantity}}</td>
+                        </tr>
+
+                    </tbody >
+                </table>
+            </table>
+        </table>
+    </div>
+

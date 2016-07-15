@@ -53,14 +53,14 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/user",method = RequestMethod.GET)
-    public Order getOrderByUser(@RequestParam(name = "id") Long id){
-        Order order = orderService.getByUserId(id);
+    public List<Order> getOrderByUser(@RequestParam(name = "id") Long id){
+        List<Order> orders = orderService.getByUserId(id);
 
-        rabbitTemplate.convertAndSend("order-queue", order);
+        rabbitTemplate.convertAndSend("order-queue", orders);
 
 
 
-        return order;
+        return orders;
     }
 
     /**
@@ -71,6 +71,8 @@ public class OrderController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Order getOrder(@PathVariable("id") Long id){
+
+        rabbitAdmin.purgeQueue("order-queue", false);
 
         Order order = orderService.getById(id);
         if(order != null){

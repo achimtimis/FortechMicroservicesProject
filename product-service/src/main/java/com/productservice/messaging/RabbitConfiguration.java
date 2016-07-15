@@ -43,7 +43,7 @@ public class RabbitConfiguration {
     }
     @Bean
     public Queue userQueue() {
-        return new Queue("product-queue",false);
+        return new Queue("product-queue",true);
     }
 
 }

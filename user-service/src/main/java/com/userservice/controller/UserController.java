@@ -3,6 +3,7 @@ package com.userservice.controller;
 import com.shopcommon.model.User;
 import com.userservice.repository.UserRepository;
 import org.apache.log4j.Logger;
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +28,16 @@ public class UserController {
     RabbitTemplate template;
 
     @Autowired
+    AmqpAdmin rabbitAdmin;
+
+    @Autowired
     private UserRepository userRepository;
 
 
     @RequestMapping(method= RequestMethod.GET)
     public List<User> findAll(){
+        rabbitAdmin.purgeQueue("user-queue", false);
+
         List<User> users = userRepository.findAll();
 
         template.convertAndSend("user-queue", users);

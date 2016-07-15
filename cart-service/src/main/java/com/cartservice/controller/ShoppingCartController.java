@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 /**
  * Created by Achim Timis on 7/7/2016.
  */
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/carts")
 public class ShoppingCartController {
@@ -66,13 +65,19 @@ public class ShoppingCartController {
      * @return
      */
     @RequestMapping(value = "/{id}",method=RequestMethod.GET)
-    public ShoppingCart getShoppinngCart(@PathVariable  Long id ) {
+    public ShoppingCart getShoppingCart(@PathVariable  Long id ) {
         ShoppingCart shoppingCart= this.shoppingCartRepository.findOne(id);
 
-        rabbitTemplate.convertAndSend("cart-queue", shoppingCart);
+        rabbitAdmin.purgeQueue("cart-queue", false);
 
-        logger.info("Sent via cart-queue: " + shoppingCart);
+        if(shoppingCart != null){
+            rabbitTemplate.convertAndSend("cart-queue", shoppingCart);
 
+            logger.info("Sent via cart-queue: " + shoppingCart);
+        }
+        else{
+            logger.info("No shopping cart was found with id " + id);
+        }
         return shoppingCart;
     }
 
@@ -89,20 +94,13 @@ public class ShoppingCartController {
     }
 
 
-    /**
-     * Create a shopping cart for a specific user
-     *
-     * @param shoppingCart
-     * @return
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public ShoppingCart create(@RequestBody ShoppingCart shoppingCart){
-        User user = this.receiveUser(shoppingCart.getUserid());
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.POST)
+    public ShoppingCart create(@PathVariable("userId") Long userId){
+        User user = this.receiveUser(userId);
 
         if(user != null){
-            List<ShoppingCartProduct> shoppingCartProducts=shoppingCart.getProductsList();
-            shoppingCartProducts.stream().forEach(p->p.setShoppingCart(shoppingCart));
-            shoppingCart.setProductsList(shoppingCartProducts);
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setUserid(user.getId());
 
             logger.info("Shopping cart created for user id " + user.getId());
 
@@ -115,7 +113,10 @@ public class ShoppingCartController {
 }
 
     @RequestMapping(value = "/user/{id}",method=RequestMethod.GET)
-    public ShoppingCart findShoppingCartByUserid(@PathVariable Long id){
+    public ShoppingCart findShoppingCartByUserId(@PathVariable Long id){
+
+        rabbitAdmin.purgeQueue("cart-queue", false);
+
         ShoppingCart cart = this.shoppingCartRepository.findByUserid(id);
         logger.info("Sent over cart-queue cart: " + cart);
         rabbitTemplate.convertAndSend("cart-queue",cart);
@@ -165,6 +166,9 @@ public class ShoppingCartController {
      */
     @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
     public List<Product> getCartProducts(@PathVariable("id") Long cartId){
+
+
+        rabbitAdmin.purgeQueue("cart-queue", false);
 
         rabbitAdmin.purgeQueue("product-queue", false);
 

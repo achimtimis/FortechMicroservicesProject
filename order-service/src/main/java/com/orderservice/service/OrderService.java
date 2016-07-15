@@ -61,7 +61,7 @@ public class OrderService {
         return null;
     }
 
-    public Order getByUserId(Long id){
+    public List<Order> getByUserId(Long id){
         return orderRepository.getByUserId(id);
     }
 
