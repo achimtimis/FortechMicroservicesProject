@@ -35,4 +35,18 @@ export class ProductManagementComponent implements OnInit {
                 error => this.errorMessage = <any>error);
     }
 
+
+//     $scope.EditProduct = function (ProductId) {
+//     var EditedProduct = CRUDService.EditEmployee(EmployeeID);
+//     EditedEmployee.then(function (Emp) {
+//         $scope.EmpDetailsModel.EmpID = Emp.data[0].empDetailModel.EmpID;
+//         $scope.EmpDetailsModel.EmpName = Emp.data[0].empDetailModel.EmpName;
+//         $scope.EmpDetailsModel.EmpPhone = Emp.data[0].empDetailModel.EmpPhone;
+//         $scope.EmpAddressModel.Address1 = Emp.data[0].empAddressModel.Address1
+//         $scope.EmpAddressModel.Address2 = Emp.data[0].empAddressModel.Address2;
+//         $scope.EmpAddressModel.Address3 = Emp.data[0].empAddressModel.Address3;
+//         $scope.$apply();
+//     })
+// };
+
 }

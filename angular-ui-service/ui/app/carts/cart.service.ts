@@ -4,8 +4,7 @@ import { Http, Response } from 'angular2/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
-import { ICart,ICartProduct }  from  './cart';
-import { IProduct } from '../products/product';
+import { ICart}  from  './cart';
 
 @Injectable()
 export class CartService {

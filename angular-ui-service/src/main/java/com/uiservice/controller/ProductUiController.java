@@ -26,6 +26,8 @@ import java.util.List;
 @RequestMapping(value = "/api/products")
 public class ProductUiController {
 
+    Logger logger = Logger.getLogger(ProductUiController.class);
+
     @Autowired
     RabbitTemplate rabbitTemplate;
 
@@ -34,7 +36,6 @@ public class ProductUiController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getAllProducts(){
-        Logger logger = Logger.getLogger(ProductUiController.class);
 
         List<Product> products = new ArrayList<>();
 
@@ -53,6 +54,30 @@ public class ProductUiController {
             logger.error(e.getMessage());
         }
         return products;
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Product addProduct(Product product){
+        Product products = null;
+
+        try {
+            rabbitAdmin.purgeQueue("product-queue", false);
+
+            rabbitTemplate.convertAndSend("product-queue", product);
+
+            URL obj = new URL("http://localhost:9999/product-service/products");
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.getResponseCode();
+
+            product = (Product)con.getContent();
+
+        } catch (MalformedURLException e) {
+            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        return product;
     }
 
 
