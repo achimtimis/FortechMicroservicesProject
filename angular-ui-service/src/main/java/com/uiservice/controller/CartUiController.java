@@ -19,7 +19,6 @@ import java.util.List;
  * Created by Flaviu Cicio on 13.07.2016.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/api/carts")
 public class CartUiController {
 
