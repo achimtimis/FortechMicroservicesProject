@@ -2,8 +2,8 @@
  * Created by Flaviu Cicio on 14.07.2016.
  */
 
-import {ROUTER_DIRECTIVES} from "angular2/router";
-import {Component, OnInit} from "angular2/core";
+import {ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {Component, OnInit} from "@angular/core";
 import {IOrder} from "./order";
 import {OrderService} from "./order.service";
 import {UserService} from "../users/user.service";

@@ -1,10 +1,9 @@
-import { Component, OnInit }  from 'angular2/core';
-import { ROUTER_DIRECTIVES } from 'angular2/router';
+import { Component, OnInit }  from '@angular/core';
+import { ROUTER_DIRECTIVES } from '@angular/router-deprecated';
 import { CartService } from './cart.service';
 import { IUser } from '../users/user';
 import { UserService } from '../users/user.service';
 import { ICart,ICartProduct} from './cart';
-import {$r} from "angular2/src/compiler/chars";
 
 @Component({
 	selector:'pm-carts',

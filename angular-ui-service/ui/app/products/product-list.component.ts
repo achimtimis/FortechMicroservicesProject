@@ -1,7 +1,7 @@
-import {Component, OnInit}  from 'angular2/core';
+import {Component, OnInit}  from '@angular/core';
 import {IProduct} from './product';
 import {ProductService} from './product.service';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {CartService} from '../carts/cart.service';
 import {IUser} from '../users/user';
 import {UserService} from '../users/user.service';
@@ -64,7 +64,7 @@ export class ProductListComponent implements OnInit {
         }
     }
 
-    cartExists():void {
+    cartExists():boolean {
         return this.cart==null;
     }
 

@@ -1,7 +1,9 @@
-import {OnInit, Component} from "angular2/core";
+import {OnInit, Component} from "@angular/core";
 import {ProductService} from "./product.service";
-import {IProduct} from "./product";
-import {ROUTER_DIRECTIVES} from "angular2/router";
+import {IProduct, Product} from "./product";
+import {ROUTER_DIRECTIVES} from "@angular/router-deprecated";
+import {ProductCrudService} from "./product-crud.service";
+import {ProductFormComponent} from "./product-form.component";
 
 /**
  * Created by Flaviu Cicio on 15.07.2016.
@@ -10,43 +12,36 @@ import {ROUTER_DIRECTIVES} from "angular2/router";
 @Component({
     selector: 'products-management',
     templateUrl: 'app/products/product-management.component.html',
-    directives: [ROUTER_DIRECTIVES]
+    directives: [ROUTER_DIRECTIVES, ProductFormComponent],
+    providers: [ProductCrudService, ProductFormComponent]
 })
 export class ProductManagementComponent implements OnInit {
 
     products: IProduct[];
     errorMessage:string = '';
-    pageTitle:string = 'Product Management'
-
-    ProductDetailsModel = {
-      prodId: '',
-        prodName: '',
-        prodStock: '',
-        prodPrice: ''
-    };
+    pageTitle:string = 'Product Management';
     
-    constructor(private _productService:ProductService) {
+    constructor(private _productCrudService:ProductCrudService ) {
     }
 
     ngOnInit():any {
-        this._productService.getProducts()
+        this._productCrudService.getAllProductsInfo()
             .subscribe(
                 products => this.products = products,
                 error => this.errorMessage = <any>error);
     }
+    
+    deleteProduct(id: number){
+        console.log("ProductManagement -> DeleteProduct with id: " + id);
+        this._productCrudService.removeProduct(id);
+        location.reload();
+        location.reload();
 
-
-//     $scope.EditProduct = function (ProductId) {
-//     var EditedProduct = CRUDService.EditEmployee(EmployeeID);
-//     EditedEmployee.then(function (Emp) {
-//         $scope.EmpDetailsModel.EmpID = Emp.data[0].empDetailModel.EmpID;
-//         $scope.EmpDetailsModel.EmpName = Emp.data[0].empDetailModel.EmpName;
-//         $scope.EmpDetailsModel.EmpPhone = Emp.data[0].empDetailModel.EmpPhone;
-//         $scope.EmpAddressModel.Address1 = Emp.data[0].empAddressModel.Address1
-//         $scope.EmpAddressModel.Address2 = Emp.data[0].empAddressModel.Address2;
-//         $scope.EmpAddressModel.Address3 = Emp.data[0].empAddressModel.Address3;
-//         $scope.$apply();
-//     })
-// };
+    }
+    
+    setEditProductId(id: number){
+        console.log("TODO: ProductManagement -> setEditProductId: " + id);
+    }
+    
 
 }
