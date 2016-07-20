@@ -4,7 +4,7 @@
 <div style="width: 50%; margin: 50px auto;">
     <div>
 
-        <product-form></product-form>
+        <product-form [model]="model"></product-form>
     </div>
 
     <hr style=" color: black"/>
@@ -31,7 +31,32 @@
                         <td>{{product.name}}</td>
                         <td>{{product.stock}}</td>
                         <td>{{product.price}}</td>
-                        <td style="text-align: center;"><button (click)="setEditProductId(product.id)" style="margin-right: 5px; font-size: 13px;" class="btn btn-sm btn-primary">Edit</button><button style="margin-left: 5px; font-size: 13px;" (click)="deleteProduct(product.id)" class="btn btn-sm btn-danger">Delete</button> </td>
+                        <td [hidden]="editMode()" style="text-align: center;">
+                            <button (click)="setEditProduct(product.id, product.name, product.stock, product.price)"
+                                    style="margin-right: 4px; font-size: 12px;" class="btn btn-sm btn-primary">Edit
+                            </button>
+                            <button style="margin-left: 4px; font-size: 12px;" (click)="deleteProduct(product.id)"
+                                    class="btn btn-sm btn-danger">Delete
+                            </button>
+                        </td>
+                        <td [hidden]="!editMode()" *ngIf="product.id == getModelId()" style="text-align: center;">
+                            <button [hidden]="!editMode()" (click)="unsetEditProduct()"
+                                    style="margin-right: 4px; font-size: 12px;" class="btn btn-sm btn-primary">Cancel
+                                Edit
+                            </button>
+                            <button style="margin-left: 4px; font-size: 13px;" (click)="deleteProduct(product.id)"
+                                    class="btn btn-sm btn-danger">Delete
+                            </button>
+                        </td>
+
+                        <td *ngIf="product.id != getModelId()" [hidden]="!editMode()" style="text-align: center;">
+                            <button (click)="setEditProduct(product.id, product.name, product.stock, product.price)"
+                                    style="margin-right: 4px; font-size: 12px;" class="btn btn-sm btn-primary">Edit
+                            </button>
+                            <button style="margin-left: 4px; font-size: 12px;" (click)="deleteProduct(product.id)"
+                                    class="btn btn-sm btn-danger">Delete
+                            </button>
+                        </td>
                     </tr>
 
                     </tbody>

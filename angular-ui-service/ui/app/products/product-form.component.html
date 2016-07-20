@@ -27,9 +27,10 @@
 
 
     <form>
-        <h3>Add Product</h3>
+        <h3 [hidden]="editMode()" >Add Product</h3>
+        <h3 [hidden]="!editMode()" >Edit Product</h3>
 
-        <div *ngIf="editMode()" class="form-group">
+        <div [hidden]="!editMode()" class="form-group">
             <label>ID&nbsp;&nbsp;&nbsp;&nbsp;</label>
             <input style="width: 500px;" type="number" [(ngModel)]="model.id" [ngModelOptions]="{standalone: true}" class="form-control" required disabled>
 
@@ -52,7 +53,7 @@
             <input style="width: 500px;" type="number" [(ngModel)]="model.price" [ngModelOptions]="{standalone: true}" class="form-control" required>
         </div>
 
-        <button [hidden]="!editMode()" type="submit" (click)="onSubmit()" class="btn btn-default">Submit</button>
+        <button  type="submit" (click)="onSubmit()" class="btn btn-default">Submit</button>
     </form >
 
 </div>

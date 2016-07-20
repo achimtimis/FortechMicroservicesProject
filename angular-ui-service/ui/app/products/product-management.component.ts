@@ -20,8 +20,10 @@ export class ProductManagementComponent implements OnInit {
     products: IProduct[];
     errorMessage:string = '';
     pageTitle:string = 'Product Management';
+
+    model:IProduct = new Product(null, "", -1, -1);
     
-    constructor(private _productCrudService:ProductCrudService ) {
+    constructor(private _productCrudService:ProductCrudService) {
     }
 
     ngOnInit():any {
@@ -39,8 +41,23 @@ export class ProductManagementComponent implements OnInit {
 
     }
     
-    setEditProductId(id: number){
-        console.log("TODO: ProductManagement -> setEditProductId: " + id);
+    setEditProduct(id: number, name: string, stock:number, price:number){
+        this.model = new Product(id, name, stock, price);
+    }
+
+    unsetEditProduct(){
+        this.model = new Product(null, '', -1, -1);
+    }
+
+    editMode():boolean{
+        if(this.model.id == null){
+            return false;
+        }
+        return true;
+    }
+    
+    getModelId(): number{
+        return this.model.id;
     }
     
 

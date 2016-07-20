@@ -29,15 +29,16 @@ System.register(["./product", "./product-crud.service", "@angular/core"], functi
                     this._productCrudService = _productCrudService;
                     this.model = new product_1.Product(null, '', 0, 0);
                     this.submitted = false;
+                    this.model = new product_1.Product(null, '', 0, 0);
                 }
                 ProductFormComponent.prototype.ngOnInit = function () {
                     return undefined;
                 };
                 ProductFormComponent.prototype.onSubmit = function () {
-                    console.log(this.model);
                     this._productCrudService.addProduct(this.model);
                     this.submitted = true;
                     location.reload();
+                    console.log("Product Form Submitted");
                 };
                 Object.defineProperty(ProductFormComponent.prototype, "diagnostic", {
                     // TODO: Remove this when we're done
@@ -51,11 +52,10 @@ System.register(["./product", "./product-crud.service", "@angular/core"], functi
                     }
                     return false;
                 };
-                ProductFormComponent.prototype.setModelId = function (id) {
-                    this.model = new product_1.Product(2, '', 0, 0);
-                    console.log("ProductFormComponent -> setModelId: " + id);
-                    console.log("ProductFormComponent -> setModelId: " + this.model.id);
-                };
+                __decorate([
+                    core_1.Input(), 
+                    __metadata('design:type', Object)
+                ], ProductFormComponent.prototype, "model", void 0);
                 ProductFormComponent = __decorate([
                     core_1.Component({
                         selector: 'product-form',

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/router-deprecated", "./product-crud.service", "./product-form.component"], function(exports_1, context_1) {
+System.register(["@angular/core", "./product", "@angular/router-deprecated", "./product-crud.service", "./product-form.component"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,12 +10,15 @@ System.register(["@angular/core", "@angular/router-deprecated", "./product-crud.
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_deprecated_1, product_crud_service_1, product_form_component_1;
+    var core_1, product_1, router_deprecated_1, product_crud_service_1, product_form_component_1;
     var ProductManagementComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (product_1_1) {
+                product_1 = product_1_1;
             },
             function (router_deprecated_1_1) {
                 router_deprecated_1 = router_deprecated_1_1;
@@ -35,6 +38,7 @@ System.register(["@angular/core", "@angular/router-deprecated", "./product-crud.
                     this._productCrudService = _productCrudService;
                     this.errorMessage = '';
                     this.pageTitle = 'Product Management';
+                    this.model = new product_1.Product(null, "", -1, -1);
                 }
                 ProductManagementComponent.prototype.ngOnInit = function () {
                     var _this = this;
@@ -47,8 +51,20 @@ System.register(["@angular/core", "@angular/router-deprecated", "./product-crud.
                     location.reload();
                     location.reload();
                 };
-                ProductManagementComponent.prototype.setEditProductId = function (id) {
-                    console.log("TODO: ProductManagement -> setEditProductId: " + id);
+                ProductManagementComponent.prototype.setEditProduct = function (id, name, stock, price) {
+                    this.model = new product_1.Product(id, name, stock, price);
+                };
+                ProductManagementComponent.prototype.unsetEditProduct = function () {
+                    this.model = new product_1.Product(null, '', -1, -1);
+                };
+                ProductManagementComponent.prototype.editMode = function () {
+                    if (this.model.id == null) {
+                        return false;
+                    }
+                    return true;
+                };
+                ProductManagementComponent.prototype.getModelId = function () {
+                    return this.model.id;
                 };
                 ProductManagementComponent = __decorate([
                     core_1.Component({
