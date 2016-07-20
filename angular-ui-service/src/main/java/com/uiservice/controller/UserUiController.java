@@ -29,7 +29,11 @@ public class UserUiController {
     RabbitTemplate rabbitTemplate;
 
 
-    private User getUsersFallback(){
+    /**
+     * returns all the users in the database
+     * @return
+     */
+    private List<User> getUsersFallback(){
         logger.info("getUsersFallback");
         return null;
     }
@@ -53,10 +57,18 @@ public class UserUiController {
         }
         return users;
     }
+
+    /**
+     * returns the user with a given id
+     * @param id
+     * @return
+     */
     private User getUserByIdFallback(Long id){
         logger.info("getUserByIdFallback");
         return null;
     }
+
+
     @HystrixCommand(fallbackMethod = "getUserByIdFallback" )
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUserById(@PathVariable("id") Long id){

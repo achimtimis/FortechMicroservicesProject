@@ -28,6 +28,10 @@ public class CartUiController {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+    /**
+     * returns all the shopping carts
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET)
     public List<ShoppingCart> getAllShoppingCarts(){
 
@@ -48,9 +52,15 @@ public class CartUiController {
         return carts;
     }
 
+    /**
+     * return the shopping cart of a given id
+     * @param id
+     * @return
+     */
     private ShoppingCart getCartFallback(Long id){
         logger.info("getCartFallback");return null;
     }
+
 
     @HystrixCommand(fallbackMethod = "getCartFallback" )
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -59,6 +69,12 @@ public class CartUiController {
 
         return cart;
     }
+
+    /**
+     * returns the shopping cart of a given user id
+     * @param id
+     * @return
+     */
     @HystrixCommand(fallbackMethod = "getCartFallback" )
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ShoppingCart getShoppingCartByUserId(@PathVariable("id") Long id){
@@ -66,6 +82,13 @@ public class CartUiController {
 
         return cart;
     }
+
+    /**
+     * removes the given product by its id from a shopping cart given by its id
+     * @param cid cart id
+     * @param pid product id
+     * @return
+     */
     private ShoppingCart removeProductFallback(Long cid,Long pid){
         logger.info("removeProductFallback");
         return null;
@@ -98,6 +121,13 @@ public class CartUiController {
         return shoppingCart;
     }
 
+    /**
+     * adds the given product to  the given shopping cart
+     * @param userId
+     * @param productId
+     * @param quantity
+     * @return
+     */
     private ShoppingCart addProductToShoppingCartFallback( Long userId,Long productId,int quantity){logger.info("addProductToShoppingCartFallback");return null;}
     @HystrixCommand(fallbackMethod = "addProductToShoppingCartFallback" )
     @RequestMapping(value = "user/{userId}/products", method = RequestMethod.GET)
@@ -135,6 +165,12 @@ public class CartUiController {
 
         return shoppingCart;
     }
+
+    /**
+     * checks out all the items of a shopping cart given by its id
+     * @param id
+     * @return
+     */
     private List<Order> checkoutFallback(Long id){logger.info("checkoutFallback");return null;}
     @HystrixCommand(fallbackMethod = "checkoutFallback" )
     @RequestMapping(value = "/{id}/order", method = RequestMethod.GET)
@@ -174,6 +210,12 @@ public class CartUiController {
 
         return order;
     }
+
+    /**
+     * returns a new shopping cart to a given user
+     * @param userId
+     * @return
+     */
     private ShoppingCart newShoppingCartFallback(Long userId){logger.info("newShoppingCartFallback");return null;}
     @HystrixCommand(fallbackMethod = "newShoppingCartFallback" )
     @RequestMapping(value = "/new", method = RequestMethod.GET)

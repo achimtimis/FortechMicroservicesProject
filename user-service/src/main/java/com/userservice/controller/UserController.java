@@ -33,7 +33,10 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-
+    /**
+     * returns the list with all users
+     * @return
+     */
     @RequestMapping(method= RequestMethod.GET)
     public List<User> findAll(){
         rabbitAdmin.purgeQueue("user-queue", false);
@@ -47,6 +50,10 @@ public class UserController {
         return users;
     }
 
+    /**
+     * adds the received user to the database
+     * @return
+     */
     @RequestMapping(method = RequestMethod.POST)
     public User create(){
 
@@ -59,6 +66,11 @@ public class UserController {
         return null;
     }
 
+    /**
+     * deletes the user with the given id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public User delete(@PathVariable Long id){
         User existingUser=userRepository.findOne(id);
@@ -66,21 +78,28 @@ public class UserController {
         return existingUser;
     }
 
+    /**
+     * updates the user with the given id
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public User update(@PathVariable Long id){
         User existingUser = userRepository.findOne(id);
-
         User newUser = (User)template.receiveAndConvert("user-queue");
-
         existingUser.setUsername(newUser.getUsername());
         existingUser.setPassword(newUser.getPassword());
-
         userRepository.save(existingUser);
 
         return existingUser;
 
     }
 
+    /**
+     * returns the user of a given id
+     * @param id
+     * @return
+     */
     @RequestMapping("/{id}")
     public String getUser(@PathVariable("id") Long id){
 

@@ -36,7 +36,10 @@ public class ProductUiController {
         return new ArrayList<Product>();
     }
 
-
+    /**
+     * returns all the products in the database
+     * @return
+     */
     @HystrixCommand(fallbackMethod = "getAllProductsFallback" )
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getAllProducts(){
@@ -60,6 +63,11 @@ public class ProductUiController {
         return products;
     }
 
+    /**
+     * adds/updates the product to the database
+     * @param product
+     * @return
+     */
     private Product addProductFallback(Product product){logger.info("addProductFallback");return null; }
 
     @HystrixCommand(fallbackMethod = "addProductFallback" )
@@ -85,6 +93,11 @@ public class ProductUiController {
         }
         return product;
     }
+
+    /**
+     * removes the product given by its id from the database
+     * @param id
+     */
     private void removeProductFallback(Long id){logger.info("removeProductFallback");}
     @HystrixCommand(fallbackMethod = "removeProductFallback" )
     @RequestMapping(method = RequestMethod.DELETE)

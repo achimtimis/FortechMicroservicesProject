@@ -22,10 +22,9 @@ public class ShoppingCart implements Serializable {
 
     public int getTotalCost(){
         int sum=0;
-
         //// TODO: 7/8/2016 replace this with java 8 stream
-        for (ShoppingCartProduct s:this.productsList){
-            sum+=s.getProductPrice()*s.getQuantity();
+        for (ShoppingCartProduct product:this.productsList){
+            sum+=product.getProductPrice()*product.getQuantity();
         }
         return sum;
     }

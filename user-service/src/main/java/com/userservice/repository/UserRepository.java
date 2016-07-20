@@ -9,8 +9,6 @@ import java.util.List;
  * Created by Achim Timis on 7/6/2016.
  */
 public interface UserRepository extends JpaRepository<User,Long> {
-//
-//    @RestResource(path="by-name")
-//    List<User> findByName(@Param("name") String name);
+
 
 }
