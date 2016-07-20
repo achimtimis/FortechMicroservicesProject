@@ -6,6 +6,7 @@ import com.shopcommon.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,10 +75,10 @@ public class ProductController {
      *
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product createProduct(){
 
-        Product product = (Product)template.receiveAndConvert();
+        Product product = (Product)template.receiveAndConvert("product-queue");
 
         logger.info("Received from product-queue: " + product);
 

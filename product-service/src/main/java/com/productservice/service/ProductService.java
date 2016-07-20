@@ -24,7 +24,8 @@ public class ProductService {
     }
 
     public Product create(Product product){
-        return productRepository.saveAndFlush(product);
+        System.out.println(productRepository.save(product));
+        return productRepository.save(product);
     }
 
     public void delete(Long id){

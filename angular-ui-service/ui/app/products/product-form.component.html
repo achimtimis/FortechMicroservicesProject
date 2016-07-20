@@ -1,0 +1,59 @@
+<style>
+    .ng-valid[required] {
+        border-left: 5px solid #42A948; /* green */
+    }
+
+    .ng-invalid {
+        border-left: 5px solid #a94442; /* red */
+    }
+
+    form{
+        width: 45%;
+        text-align: center;
+    }
+
+    h3{
+        text-align: center;
+    }
+
+    label{
+        float:left;
+    }
+
+</style>
+
+<div class="container">
+
+
+
+    <form>
+        <h3 [hidden]="editMode()" >Add Product</h3>
+        <h3 [hidden]="!editMode()" >Edit Product</h3>
+
+        <div [hidden]="!editMode()" class="form-group">
+            <label>ID&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            <input style="width: 500px;" type="number" [(ngModel)]="model.id" [ngModelOptions]="{standalone: true}" class="form-control" required disabled>
+
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input style="width: 500px;" id="name" placeholder="Product Name" type="text" [(ngModel)]="model.name" class="form-control" [ngModelOptions]="{standalone: true}" required>
+
+        </div>
+
+        <div class="form-group">
+            <label>Stock</label>
+            <input style="width: 500px;" type="number" [(ngModel)]="model.stock" [ngModelOptions]="{standalone: true}" class="form-control" required>
+
+        </div>
+
+        <div class="form-group">
+            <label>Price</label>
+            <input style="width: 500px;" type="number" [(ngModel)]="model.price" [ngModelOptions]="{standalone: true}" class="form-control" required>
+        </div>
+
+        <button  type="submit" (click)="onSubmit()" class="btn btn-default">Submit</button>
+    </form >
+
+</div>

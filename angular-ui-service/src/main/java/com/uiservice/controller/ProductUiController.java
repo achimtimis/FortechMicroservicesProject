@@ -6,10 +6,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -22,7 +19,6 @@ import java.util.List;
  * Created by Flaviu Cicio on 13.07.2016.
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/api/products")
 public class ProductUiController {
 
@@ -56,12 +52,14 @@ public class ProductUiController {
         return products;
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Product addProduct(Product product){
-        Product products = null;
+
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Product addProduct(@RequestBody Product product){
 
         try {
             rabbitAdmin.purgeQueue("product-queue", false);
+
+            logger.info("Product " + product + " was send to product-queue");
 
             rabbitTemplate.convertAndSend("product-queue", product);
 
@@ -69,8 +67,6 @@ public class ProductUiController {
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
             con.getResponseCode();
-
-            product = (Product)con.getContent();
 
         } catch (MalformedURLException e) {
             logger.error(e.getMessage());
@@ -80,7 +76,19 @@ public class ProductUiController {
         return product;
     }
 
+    @RequestMapping(method = RequestMethod.DELETE)
+    public void removeProduct(@RequestParam("id") Long id){
+        try {
+            URL obj = new URL("http://localhost:9999/product-service/products/" + id);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("DELETE");
+            con.getResponseCode();
 
-
+        } catch (MalformedURLException e) {
+            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
 
 }

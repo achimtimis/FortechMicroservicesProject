@@ -1,8 +1,8 @@
 /**
  * Created by Flaviu Cicio on 14.07.2016.
  */
-import {Injectable} from "angular2/core";
-import {Http, Response} from "angular2/http";
+import {Injectable} from "@angular/core";
+import {Http, Response} from "@angular/http";
 import {Observable} from "rxjs/Rx";
 import {IOrder} from "./order";
 

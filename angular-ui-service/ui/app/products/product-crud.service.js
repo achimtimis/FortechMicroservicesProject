@@ -1,4 +1,4 @@
-System.register(["angular2/http", "angular2/core"], function(exports_1, context_1) {
+System.register(["@angular/http", "@angular/core"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -11,7 +11,7 @@ System.register(["angular2/http", "angular2/core"], function(exports_1, context_
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var http_1, core_1;
-    var CRUDProductService;
+    var ProductCrudService;
     return {
         setters:[
             function (http_1_1) {
@@ -21,34 +21,43 @@ System.register(["angular2/http", "angular2/core"], function(exports_1, context_
                 core_1 = core_1_1;
             }],
         execute: function() {
-            CRUDProductService = (function () {
-                function CRUDProductService(_http) {
+            ProductCrudService = (function () {
+                function ProductCrudService(_http) {
                     this._http = _http;
                     this._productUrl = 'http://localhost:9999/api/products';
+                    this.headers = new http_1.Headers();
+                    this.headers.append('Content-Type', 'application/json');
+                    this.headers.append('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+                    this.headers.append('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
                 }
-                CRUDProductService.prototype.getAllEmployeeInfo = function () {
+                ProductCrudService.prototype.getAllProductsInfo = function () {
                     return this._http.get(this._productUrl)
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('CRUDProductService -> getAllProducts -> Result: ' + JSON.stringify(data)); });
                 };
                 ;
-                CRUDProductService.prototype.addProduct = function (product) {
-                    var ServerData = this._http.get(this._productUrl, {
-                        method: "Get",
-                        url: this._productUrl,
-                        data: JSON.stringify(product),
-                        dataType: 'json',
-                        contentType: 'application/json',
-                    });
+                ProductCrudService.prototype.addProduct = function (product) {
+                    var _this = this;
+                    var ServerData = this._http.post(this._productUrl, JSON.stringify(product), {
+                        headers: this.headers
+                    }).subscribe(null, function (err) { return _this.err; });
+                    console.log(this.err);
                     return ServerData;
                 };
-                CRUDProductService = __decorate([
+                ProductCrudService.prototype.removeProduct = function (id) {
+                    var _this = this;
+                    this._http.delete(this._productUrl + "?id=" + id, {
+                        headers: this.headers
+                    }).subscribe(null, function (err) { return _this.err; });
+                    console.log(this.err);
+                };
+                ProductCrudService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http])
-                ], CRUDProductService);
-                return CRUDProductService;
+                ], ProductCrudService);
+                return ProductCrudService;
             }());
-            exports_1("CRUDProductService", CRUDProductService);
+            exports_1("ProductCrudService", ProductCrudService);
         }
     }
 });
