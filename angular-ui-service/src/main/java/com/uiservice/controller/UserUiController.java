@@ -1,5 +1,6 @@
 package com.uiservice.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shopcommon.model.Product;
 import com.shopcommon.model.User;
 import org.apache.log4j.Logger;
@@ -27,6 +28,12 @@ public class UserUiController {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+
+    private User getUsersFallback(){
+        logger.info("getUsersFallback");
+        return null;
+    }
+    @HystrixCommand(fallbackMethod = "getUsersFallback" )
     @RequestMapping(method = RequestMethod.GET)
     public List<User> getAllUsers(){
 
@@ -46,7 +53,11 @@ public class UserUiController {
         }
         return users;
     }
-
+    private User getUserByIdFallback(Long id){
+        logger.info("getUserByIdFallback");
+        return null;
+    }
+    @HystrixCommand(fallbackMethod = "getUserByIdFallback" )
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUserById(@PathVariable("id") Long id){
         User user = receiveUserById(id);

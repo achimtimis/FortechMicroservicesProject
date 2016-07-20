@@ -43,13 +43,12 @@ System.register(['@angular/core', './product.service', '@angular/router-deprecat
                     this.errorMessage = '';
                     this.stockMessage = '';
                     this.quantity = 0;
-                    this.userID = 1;
                 }
                 ProductListComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this._productService.getProducts()
                         .subscribe(function (products) { return _this.products = products; }, function (error) { return _this.errorMessage = error; });
-                    this._userService.getUser2(this.userID)
+                    this._userService.getUser2(this._userService.getUserID())
                         .subscribe(function (loggedUser) { return _this.loggedUser = loggedUser; }, function (error) { return _this.errorMessage = error; });
                     this._cartService.getCartByUserId(this._userService.getUserID())
                         .subscribe(function (cart) { return _this.cart = cart; }, function (error) { return _this.errorMessage = error; });

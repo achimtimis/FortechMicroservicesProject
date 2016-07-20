@@ -29,6 +29,7 @@ System.register(['@angular/core', '@angular/http', 'rxjs/Observable', 'rxjs/add/
             UserService = (function () {
                 function UserService(_http) {
                     this._http = _http;
+                    this.userId = 1;
                     this._userUrl = 'http://localhost:9999/api/users';
                 }
                 UserService.prototype.getUsers = function () {
@@ -39,7 +40,7 @@ System.register(['@angular/core', '@angular/http', 'rxjs/Observable', 'rxjs/add/
                 };
                 UserService.prototype.getUser2 = function (id) {
                     this.userId = id;
-                    return this._http.get(this._userUrl + '/1')
+                    return this._http.get(this._userUrl + '/' + this.userId)
                         .map(function (response) { return response.json(); })
                         .do(function (data) { return console.log('All: ' + JSON.stringify(data)); })
                         .catch(this.handleError);

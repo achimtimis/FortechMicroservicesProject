@@ -1,5 +1,6 @@
 package com.uiservice.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shopcommon.model.Order;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +25,13 @@ public class OrderUiController {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+
+    private List<Order> getOrderByUserIdFallback(Long userId){
+        logger.info("getOrderByUserIdFallback");
+        return null;
+    }
+
+    @HystrixCommand(fallbackMethod = "getOrderByUserIdFallback" )
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public List<Order> getOrderByUserId(@RequestParam("id") Long userId){
         List<Order> order = null;

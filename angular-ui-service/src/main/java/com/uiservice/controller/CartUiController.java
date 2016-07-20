@@ -1,5 +1,6 @@
 package com.uiservice.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shopcommon.model.Order;
 import com.shopcommon.model.ShoppingCart;
 import org.apache.log4j.Logger;
@@ -47,20 +48,30 @@ public class CartUiController {
         return carts;
     }
 
+    private ShoppingCart getCartFallback(Long id){
+        logger.info("getCartFallback");return null;
+    }
+
+    @HystrixCommand(fallbackMethod = "getCartFallback" )
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ShoppingCart getShoppingCartById(@PathVariable("id") Long id){
         ShoppingCart cart = receiveShoppingCartById(id);
 
         return cart;
     }
-
+    @HystrixCommand(fallbackMethod = "getCartFallback" )
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ShoppingCart getShoppingCartByUserId(@PathVariable("id") Long id){
         ShoppingCart cart = receiveShoppingCartByUserId(id);
 
         return cart;
     }
+    private ShoppingCart removeProductFallback(Long cid,Long pid){
+        logger.info("removeProductFallback");
+        return null;
+    }
 
+    @HystrixCommand(fallbackMethod = "removeProductFallback" )
     @RequestMapping(value = "/{cid}/products/{pid}",method= RequestMethod.GET)
     public ShoppingCart removeProduct(@PathVariable Long cid,@PathVariable Long pid){
         ShoppingCart shoppingCart = receiveShoppingCartById(cid);
@@ -87,6 +98,8 @@ public class CartUiController {
         return shoppingCart;
     }
 
+    private ShoppingCart addProductToShoppingCartFallback( Long userId,Long productId,int quantity){logger.info("addProductToShoppingCartFallback");return null;}
+    @HystrixCommand(fallbackMethod = "addProductToShoppingCartFallback" )
     @RequestMapping(value = "user/{userId}/products", method = RequestMethod.GET)
     public ShoppingCart addProductToShoppingCart(@PathVariable("userId") Long userId, @RequestParam(value = "productId") Long productId,@RequestParam(value = "quantity") int quantity){
         ShoppingCart shoppingCart = null;
@@ -122,7 +135,8 @@ public class CartUiController {
 
         return shoppingCart;
     }
-
+    private List<Order> checkoutFallback(Long id){logger.info("checkoutFallback");return null;}
+    @HystrixCommand(fallbackMethod = "checkoutFallback" )
     @RequestMapping(value = "/{id}/order", method = RequestMethod.GET)
     public List<Order> checkout(@PathVariable("id") Long id){
         List<Order> order=  null;
@@ -160,7 +174,8 @@ public class CartUiController {
 
         return order;
     }
-
+    private ShoppingCart newShoppingCartFallback(Long userId){logger.info("newShoppingCartFallback");return null;}
+    @HystrixCommand(fallbackMethod = "newShoppingCartFallback" )
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public ShoppingCart newShoppingCart(@Validated @RequestParam("userId") Long userId){
         ShoppingCart shoppingCart = null;
