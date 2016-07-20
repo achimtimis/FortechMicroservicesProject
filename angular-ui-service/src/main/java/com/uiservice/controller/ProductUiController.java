@@ -1,5 +1,6 @@
 package com.uiservice.controller;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shopcommon.model.Product;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -30,13 +31,20 @@ public class ProductUiController {
     @Autowired
     RabbitAdmin rabbitAdmin;
 
+    private List<Product> getAllProductsFallback(){
+        rabbitAdmin.purgeQueue("product-queue", true);
+        return new ArrayList<Product>();
+    }
+
+
+    @HystrixCommand(fallbackMethod = "getAllProductsFallback" )
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getAllProducts(){
 
         List<Product> products = new ArrayList<>();
 
         try {
-            rabbitAdmin.purgeQueue("product-queue", false);
+//            rabbitAdmin.purgeQueue("product-queue", false);
 
             URL obj = new URL("http://localhost:9999/product-service/products");
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -52,12 +60,14 @@ public class ProductUiController {
         return products;
     }
 
+    private Product addProductFallback(Product product){logger.info("addProductFallback");return null; }
 
+    @HystrixCommand(fallbackMethod = "addProductFallback" )
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Product addProduct(@RequestBody Product product){
 
         try {
-            rabbitAdmin.purgeQueue("product-queue", false);
+//            rabbitAdmin.purgeQueue("product-queue", false);
 
             logger.info("Product " + product + " was send to product-queue");
 
@@ -75,7 +85,8 @@ public class ProductUiController {
         }
         return product;
     }
-
+    private void removeProductFallback(Long id){logger.info("removeProductFallback");}
+    @HystrixCommand(fallbackMethod = "removeProductFallback" )
     @RequestMapping(method = RequestMethod.DELETE)
     public void removeProduct(@RequestParam("id") Long id){
         try {

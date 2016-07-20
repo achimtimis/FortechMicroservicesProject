@@ -10,7 +10,7 @@ import { IUser } from './user';
 @Injectable()
 export class UserService {
     
-    userId : number;
+    userId : number = 1;
     private _userUrl = 'http://localhost:9999/api/users';
     constructor(private _http: Http) { }
 
@@ -23,7 +23,7 @@ export class UserService {
 
     getUser2(id:number) : Observable<IUser>{
         this.userId=id;
-        return this._http.get(this._userUrl + '/1')
+        return this._http.get(this._userUrl + '/' + this.userId) 
                 .map((response: Response) => <IUser> response.json())
                 .do(data => console.log('All: ' +  JSON.stringify(data)))
                 .catch(this.handleError);

@@ -22,7 +22,7 @@ export class ProductListComponent implements OnInit {
     quantity:number = 0;
     products:IProduct[];
     loggedUser:IUser;
-    userID:number = 1;
+    
     cart:ICart;
 
 
@@ -35,7 +35,7 @@ export class ProductListComponent implements OnInit {
             .subscribe(
                 products => this.products = products,
                 error => this.errorMessage = <any>error);
-        this._userService.getUser2(this.userID)
+        this._userService.getUser2(this._userService.getUserID())
             .subscribe(
                 loggedUser => this.loggedUser = loggedUser,
                 error => this.errorMessage = <any>error
