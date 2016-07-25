@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +37,7 @@ public class ProductUiController {
     RabbitAdmin rabbitAdmin;
 
     @Autowired
-    @LoadBalanced
-    protected RestTemplate restTemplate;
+    private LoadBalancerClient loadBalancer;
 
     private List<Product> getAllProductsFallback(){
         rabbitAdmin.purgeQueue("product-queue", true);
@@ -55,7 +57,11 @@ public class ProductUiController {
         try {
 //            rabbitAdmin.purgeQueue("product-queue", false);
 
-            URL obj = new URL("http://localhost:9999/product-service/products");
+            ServiceInstance instance = loadBalancer.choose("product-service");
+            URI uri = instance.getUri();
+
+//            URL obj = new URL("http://localhost:9999/product-service/products");
+            URL obj = uri.toURL();
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.getResponseCode();
 
