@@ -43,6 +43,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!--RIBBON - LOAD BALANCING-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-ribbon</artifactId>
+		</dependency>
+
+
 		<!--RABBIT - MESSAGING-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

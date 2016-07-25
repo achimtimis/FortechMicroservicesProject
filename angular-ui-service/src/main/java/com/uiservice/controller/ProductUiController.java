@@ -6,8 +6,10 @@ import org.apache.log4j.Logger;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -30,6 +32,10 @@ public class ProductUiController {
 
     @Autowired
     RabbitAdmin rabbitAdmin;
+
+    @Autowired
+    @LoadBalanced
+    protected RestTemplate restTemplate;
 
     private List<Product> getAllProductsFallback(){
         rabbitAdmin.purgeQueue("product-queue", true);
