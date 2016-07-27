@@ -11,7 +11,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @IntegrationTest("server.port:0")
-@SpringApplicationConfiguration(classes = {IntegrationTestApplication.class})
 public class IntegrationTests {
     RestTemplate restTemplate;
     MultiValueMap<String, String> headers;
