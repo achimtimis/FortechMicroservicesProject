@@ -56,13 +56,6 @@
             <version>1.10.19</version>
         </dependency>
 
-        <!-- REST Assured -->
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>2.9.0</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all -->
         <dependency>
             <groupId>org.hamcrest</groupId>
