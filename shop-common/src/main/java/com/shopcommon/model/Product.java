@@ -64,4 +64,33 @@ public class Product implements Serializable{
                 ", price=" + price +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        if (stock != product.stock) return false;
+        if (price != product.price) return false;
+        if (!id.equals(product.id)) return false;
+        return name != null ? name.equals(product.name) : product.name == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + stock;
+        result = 31 * result + price;
+        return result;
+    }
+
+    public Product(String name, int stock, int price) {
+        this.name = name;
+        this.stock = stock;
+        this.price = price;
+    }
 }

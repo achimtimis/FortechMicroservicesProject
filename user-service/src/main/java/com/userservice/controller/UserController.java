@@ -4,12 +4,15 @@ import com.shopcommon.model.User;
 import com.userservice.repository.UserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +31,7 @@ public class UserController {
     RabbitTemplate template;
 
     @Autowired
-    AmqpAdmin rabbitAdmin;
+    RabbitAdmin rabbitAdmin;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,9 +46,12 @@ public class UserController {
 
         List<User> users = userRepository.findAll();
 
-        template.convertAndSend("user-queue", users);
+
+        template.convertAndSend("user-queue", new ArrayList<>(users));
+//        template.convertAndSend("user-queue", users);
 
         logger.info("Sent " + users.size() + " users via user-queue");
+        logger.info("Sent " + users + " users via user-queue");
 
         return users;
     }
@@ -54,7 +60,7 @@ public class UserController {
      * adds the received user to the database
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public User create(){
 
         User user = (User)template.receiveAndConvert("user-queue");
@@ -71,7 +77,7 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public User delete(@PathVariable Long id){
         User existingUser=userRepository.findOne(id);
         userRepository.delete(existingUser);
@@ -83,13 +89,13 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public User update(@PathVariable Long id){
         User existingUser = userRepository.findOne(id);
         User newUser = (User)template.receiveAndConvert("user-queue");
         existingUser.setUsername(newUser.getUsername());
         existingUser.setPassword(newUser.getPassword());
-        userRepository.save(existingUser);
+        existingUser = userRepository.save(existingUser);
 
         return existingUser;
 
@@ -100,7 +106,7 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String getUser(@PathVariable("id") Long id){
 
         User existingUser = userRepository.findOne(id);

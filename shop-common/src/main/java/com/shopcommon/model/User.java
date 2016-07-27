@@ -1,13 +1,14 @@
 package com.shopcommon.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Achim Timis on 7/6/2016.
  */
 @Entity
 @Table(name="users", schema = "users")
-public class User {
+public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +21,12 @@ public class User {
     }
 
     public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(Long id, String username, String password) {
+        this.id = id;
         this.username = username;
         this.password = password;
     }
@@ -77,4 +84,6 @@ public class User {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         return result;
     }
+
+
 }
