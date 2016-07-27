@@ -1,108 +1,102 @@
 package com.integration.test;
 
+import com.integration.test.repository.ProductRepository;
 import com.shopcommon.model.Product;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by Flaviu Cicio on 27.07.2016.
  */
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {IntegrationTestApplication.class})
 public class ProductServiceIntegrationTest extends IntegrationTests{
     private static final String TEST_PRODUCT_NAME = "productTest";
     private static final int TEST_PRODUCT_PRICE = 20;
     private static final int TEST_PRODUCT_STOCK = 100;
-    private List<Product> testProducts;
+    private Product product;
     public static final String API_URL = "http://localhost:9999/api";
 
-@Before
+    @Autowired
+    ProductRepository productRepository;
+
+    @Before
     public final void setUpProductTest() throws Exception{
-        testProducts = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            Product product = new Product(TEST_PRODUCT_NAME + String.valueOf(i), TEST_PRODUCT_STOCK*i, TEST_PRODUCT_PRICE*i);
-            testProducts.add(product);
-        }
+        product = new Product(TEST_PRODUCT_NAME, TEST_PRODUCT_STOCK, TEST_PRODUCT_PRICE);
     }
 
     @Test
     public void testGetAllProducts(){
 
-        List<Product> repoProducts = new ArrayList<>();
+        //Generate products, add them to repository and save their ids
+        List<Long> testProductIds = new ArrayList<>();
+        for(int i = 0; i < 10; i++){
+            Product testProduct = new Product(TEST_PRODUCT_NAME + String.valueOf(i), i*10, i);
+            testProductIds.add(productRepository.save(testProduct).getId());
+        }
 
-        testProducts.forEach(product -> repoProducts.add(this.addProduct(product)));
-        List<Product> resultProducts = this.getAllProducts();
+        Product[] apiProducts = restTemplate.getForObject(API_URL + "/products", Product[].class);
+        List<Product> repoProducts = productRepository.findAll();
 
-        //Asserts
-        repoProducts.forEach(product ->  Assert.assertTrue(resultProducts.contains(product)));
-        Assert.assertTrue(resultProducts.size() >= repoProducts.size());
+        Assert.assertArrayEquals(apiProducts, repoProducts.toArray());
 
-        //Database cleaning
-        repoProducts.forEach(product -> this.deleteProduct(product.getId()));
+        testProductIds.forEach(id -> productRepository.delete(id));
     }
 
     @Test
     public void testGetSpecificProduct(){
+        Product repoProduct = productRepository.save(this.product);
 
-        Product repoProduct = this.addProduct(testProducts.get(0));
-        Product apiProduct = this.getSpecificProduct(repoProduct.getId());
+        Product apiProduct = restTemplate.getForObject(API_URL + "/products/" + repoProduct.getId(), Product.class);
 
         Assert.assertEquals(apiProduct, repoProduct);
 
-        this.deleteProduct(repoProduct.getId());
+        productRepository.delete(repoProduct.getId());
     }
 
     @Test
     public void testAddProduct(){
 
-        Assert.assertFalse(this.getAllProducts().contains(this.testProducts.get(0)));
+        int preAddSize = productRepository.findAll().size();
 
-        Product product = this.addProduct(this.testProducts.get(0));
+        HttpEntity<Product> request = new HttpEntity<>(product, headers);
+        Product apiProduct = restTemplate.postForObject(API_URL + "/products", request, Product.class);
+        Product repoProduct = productRepository.findOne(apiProduct.getId());
 
-        Assert.assertTrue(this.getAllProducts().contains(product));
+        int postAddSize = productRepository.findAll().size();
 
-        this.deleteProduct(product.getId());
+
+        Assert.assertTrue(preAddSize < postAddSize);
+        Assert.assertEquals(repoProduct, apiProduct);
+        Assert.assertEquals(repoProduct.getName(), product.getName());
+        Assert.assertEquals(repoProduct.getPrice(), product.getPrice());
+        Assert.assertEquals(repoProduct.getStock(), product.getStock());
+
+        productRepository.delete(repoProduct.getId());
     }
 
     @Test
     public void testDeleteProduct(){
 
-        Product product = this.addProduct(this.testProducts.get(0));
-        Assert.assertTrue(this.getAllProducts().contains(product));
+        int initialSize = productRepository.findAll().size();
 
-        this.deleteProduct(product.getId());
-        Assert.assertFalse(this.getAllProducts().contains(product));
+        Product repoProduct = productRepository.save(product);
 
-    }
+        int postAddSize = productRepository.findAll().size();
 
-    private Product addProduct(Product product){
-        HttpEntity<Product> request = new HttpEntity<>(product, headers);
-        Product apiProduct = restTemplate.postForObject(API_URL + "/products", request, Product.class);
+        restTemplate.delete(API_URL + "/products?id=" + repoProduct.getId());
 
-        return apiProduct;
-    }
+        int postDeleteSize = productRepository.findAll().size();
 
-    private void deleteProduct(Long id){
-        restTemplate.delete(API_URL + "/products?id=" + id);
-    }
-
-    private List<Product> getAllProducts(){
-        Product[] apiProducts = restTemplate.getForObject(API_URL + "/products", Product[].class);
-        return Arrays.asList(apiProducts);
-    }
-
-    private Product getSpecificProduct(Long id){
-        Product product = restTemplate.getForObject(API_URL + "/products/" + id, Product.class);
-        return product;
+        Assert.assertTrue(initialSize < postAddSize);
+        Assert.assertTrue(initialSize == postDeleteSize);
     }
 }
