@@ -37,7 +37,7 @@ public class ProductController {
 
         logger.info("Emit to product-queue: " + products);
 
-        template.convertAndSend(products);
+        template.convertAndSend("product-queue", products);
 
         return products;
     }

@@ -40,6 +40,7 @@ public class ProductUiController {
     private LoadBalancerClient loadBalancer;
 
     private List<Product> getAllProductsFallback(){
+        logger.info("getAllProductsFallback");
         rabbitAdmin.purgeQueue("product-queue", true);
         return new ArrayList<Product>();
     }
@@ -59,6 +60,7 @@ public class ProductUiController {
 
             ServiceInstance instance = loadBalancer.choose("product-service");
             URI uri = instance.getUri();
+            uri = URI.create(uri.toString()+"/products");
 
 //            URL obj = new URL("http://localhost:9999/product-service/products");
             URL obj = uri.toURL();
