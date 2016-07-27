@@ -5,12 +5,10 @@ import com.shopcommon.model.Product;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +16,8 @@ import java.util.List;
 /**
  * Created by Flaviu Cicio on 27.07.2016.
  */
+
+@RunWith(SpringJUnit4ClassRunner.class)
 public class ProductServiceIntegrationTest extends IntegrationTests{
     private static final String TEST_PRODUCT_NAME = "productTest";
     private static final int TEST_PRODUCT_PRICE = 20;
