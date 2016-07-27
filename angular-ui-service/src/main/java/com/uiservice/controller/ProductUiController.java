@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +27,8 @@ public class ProductUiController {
 
     Logger logger = Logger.getLogger(ProductUiController.class);
 
+    RestTemplate restTemplate = new RestTemplate();
+
     @Autowired
     RabbitTemplate rabbitTemplate;
 
@@ -39,19 +38,19 @@ public class ProductUiController {
     @Autowired
     private LoadBalancerClient loadBalancer;
 
-    private List<Product> getAllProductsFallback(){
-        logger.info("getAllProductsFallback");
+    private List<Product> getAllProductsFallback() {
         rabbitAdmin.purgeQueue("product-queue", true);
         return new ArrayList<Product>();
     }
 
     /**
      * returns all the products in the database
+     *
      * @return
      */
-    @HystrixCommand(fallbackMethod = "getAllProductsFallback" )
+    @HystrixCommand(fallbackMethod = "getAllProductsFallback")
     @RequestMapping(method = RequestMethod.GET)
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
 
         List<Product> products = new ArrayList<>();
 
@@ -60,10 +59,10 @@ public class ProductUiController {
 
             ServiceInstance instance = loadBalancer.choose("product-service");
             URI uri = instance.getUri();
-            uri = URI.create(uri.toString()+"/products");
 
 //            URL obj = new URL("http://localhost:9999/product-service/products");
-            URL obj = uri.toURL();
+            URL obj = new URL(uri.toString() + "/products");
+
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.getResponseCode();
 
@@ -79,14 +78,18 @@ public class ProductUiController {
 
     /**
      * adds/updates the product to the database
+     *
      * @param product
      * @return
      */
-    private Product addProductFallback(Product product){logger.info("addProductFallback");return null; }
+    private Product addProductFallback(Product product) {
+        logger.info("addProductFallback");
+        return null;
+    }
 
-    @HystrixCommand(fallbackMethod = "addProductFallback" )
+    @HystrixCommand(fallbackMethod = "addProductFallback")
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Product addProduct(@RequestBody Product product){
+    public Product addProduct(@RequestBody Product product) {
 
         try {
 //            rabbitAdmin.purgeQueue("product-queue", false);
@@ -95,14 +98,12 @@ public class ProductUiController {
 
             rabbitTemplate.convertAndSend("product-queue", product);
 
-            URL obj = new URL("http://localhost:9999/product-service/products");
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
-            con.getResponseCode();
+            ServiceInstance instance = loadBalancer.choose("product-service");
+            URI uri = instance.getUri();
+            uri = new URI(uri.toString() + "/products");
 
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
+            product = restTemplate.postForObject(uri, product, Product.class);
+        } catch (URISyntaxException e) {
             logger.error(e.getMessage());
         }
         return product;
@@ -110,14 +111,23 @@ public class ProductUiController {
 
     /**
      * removes the product given by its id from the database
+     *
      * @param id
      */
-    private void removeProductFallback(Long id){logger.info("removeProductFallback");}
-    @HystrixCommand(fallbackMethod = "removeProductFallback" )
+    private void removeProductFallback(Long id) {
+        logger.info("removeProductFallback");
+    }
+
+    @HystrixCommand(fallbackMethod = "removeProductFallback")
     @RequestMapping(method = RequestMethod.DELETE)
-    public void removeProduct(@RequestParam("id") Long id){
+    public void removeProduct(@RequestParam("id") Long id) {
         try {
-            URL obj = new URL("http://localhost:9999/product-service/products/" + id);
+            ServiceInstance instance = loadBalancer.choose("product-service");
+            URI uri = instance.getUri();
+
+            URL obj = new URL(uri.toString() + "/products" + id);
+//            URL obj = new URL("http://localhost:9999/product-service/products/" + id);
+
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("DELETE");
             con.getResponseCode();
