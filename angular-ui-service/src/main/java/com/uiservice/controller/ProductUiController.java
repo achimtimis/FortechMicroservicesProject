@@ -3,7 +3,6 @@ package com.uiservice.controller;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shopcommon.model.Product;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,8 @@ public class ProductUiController {
     @Autowired
     private LoadBalancerClient loadBalancer;
 
-    private List<Product> getAllProductsFallback() {
+    private List<Product> getAllProductsFallback(){
+        logger.info("getAllProductsFallback");
         rabbitAdmin.purgeQueue("product-queue", true);
         return new ArrayList<Product>();
     }
@@ -56,18 +56,19 @@ public class ProductUiController {
         List<Product> products = new ArrayList<>();
 
         try {
+//            rabbitAdmin.purgeQueue("product-queue", false);
 
             ServiceInstance instance = loadBalancer.choose("product-service");
             URI uri = instance.getUri();
+            uri = URI.create(uri.toString()+"/products");
 
+//            URL obj = new URL("http://localhost:9999/product-service/products");
             URL obj = new URL(uri.toString() + "/products");
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.getResponseCode();
 
             products.addAll((List<Product>) rabbitTemplate.receiveAndConvert("product-queue"));
-
-            logger.info("Received from product-queue: " + products);
 
         } catch (MalformedURLException e) {
             logger.error(e.getMessage());
@@ -79,7 +80,6 @@ public class ProductUiController {
 
     /**
      * adds/updates the product to the database
-     *
      * @param product
      * @return
      */
@@ -126,44 +126,18 @@ public class ProductUiController {
             ServiceInstance instance = loadBalancer.choose("product-service");
             URI uri = instance.getUri();
 
-            URL obj = new URL(uri.toString() + "/products/" + id);
+            URL obj = new URL(uri.toString() + "/products" + id);
+//            URL obj = new URL("http://localhost:9999/product-service/products/" + id);
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("DELETE");
             con.getResponseCode();
 
-            logger.info("Deleted product with id " + id + " from repository");
         } catch (MalformedURLException e) {
             logger.error(e.getMessage());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product getProduct(@PathVariable("id") Long id) {
-        Product product = null;
-        try {
-            ServiceInstance instance = loadBalancer.choose("product-service");
-            URI uri = instance.getUri();
-
-            URL obj = new URL(uri.toString() + "/products/" + id);
-
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.getResponseCode();
-
-            product = (Product)rabbitTemplate.receiveAndConvert("product-queue");
-
-            logger.info("Received from product-queue: " + product);
-
-
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-        return product;
     }
 
 }
