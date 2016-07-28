@@ -29,7 +29,8 @@ Hystrix Service
     -> user-service<br>
     -> product-service<br>
     -> order-service<br>
-    -> cart-service<br><br>
+    -> cart-service<br>
+    -> angularui-service<br><br>
     -----------------------------------------------------------------------------------------------------------------------<br><br>
 Every service is accessible via Zuul Server on `http://localhost:9999/{service-name}/{mapped_functionality}`.<br><br>
     -----------------------------------------------------------------------------------------------------------------------<br><br>
