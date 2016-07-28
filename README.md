@@ -40,7 +40,7 @@ I added to the main project folder a backup of the PostgreSQL database named _"o
 
 
 -----------------------------------------------------------------------------------------------------------------------<br><br>
-Other : 
+<b>Other :</b> 
 
 Use "git config --system core.longpaths true" if you get path too long error
 
