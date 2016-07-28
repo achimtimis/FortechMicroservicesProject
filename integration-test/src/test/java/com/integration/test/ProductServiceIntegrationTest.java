@@ -65,8 +65,6 @@ public class ProductServiceIntegrationTest extends IntegrationTests{
     @Test
     public void testAddProduct(){
 
-        Assert.assertFalse(this.getAllProducts().contains(this.testProducts.get(0)));
-
         Product product = this.addProduct(this.testProducts.get(0));
 
         Assert.assertTrue(this.getAllProducts().contains(product));

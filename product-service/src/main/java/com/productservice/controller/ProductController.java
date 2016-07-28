@@ -33,6 +33,7 @@ public class ProductController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public List<Product> getProducts(){
+
         List<Product> products = productService.getAll();
 
         logger.info("Emit to product-queue: " + products);
