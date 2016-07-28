@@ -93,4 +93,6 @@ public class Product implements Serializable{
         this.stock = stock;
         this.price = price;
     }
+
+
 }

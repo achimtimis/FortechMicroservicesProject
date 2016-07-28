@@ -60,8 +60,6 @@ public class ProductUiController {
 
             ServiceInstance instance = loadBalancer.choose("product-service");
             URI uri = instance.getUri();
-            uri = URI.create(uri.toString()+"/products");
-
             URL obj = new URL(uri.toString() + "/products");
 
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
