@@ -15,7 +15,7 @@ Eureka Service:
 
 Config Service
 <br>
-Zull Service
+Zuul Service
 <br>
 Hystrix Service
 <br>
