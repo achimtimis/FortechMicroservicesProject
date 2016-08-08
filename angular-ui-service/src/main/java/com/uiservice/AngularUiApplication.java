@@ -25,4 +25,3 @@ public class AngularUiApplication {
         SpringApplication.run(AngularUiApplication.class, args);
     }
 }
-,
