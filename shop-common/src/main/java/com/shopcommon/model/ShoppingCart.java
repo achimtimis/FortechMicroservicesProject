@@ -21,7 +21,7 @@ public class ShoppingCart implements Serializable {
     public ShoppingCart(){}
 
     public int getTotalCost(){
-        int sum=0;
+        Integer sum=0;
         //// TODO: 7/8/2016 replace this with java 8 stream
         for (ShoppingCartProduct product:this.productsList){
             sum+=product.getProductPrice()*product.getQuantity();
@@ -30,8 +30,8 @@ public class ShoppingCart implements Serializable {
     }
 
 
-    @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ShoppingCartProduct> productsList=new ArrayList<ShoppingCartProduct>();
+    @OneToMany(mappedBy = "shoppingCart",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ShoppingCartProduct> productsList=new ArrayList<>();
 
     public ShoppingCart(Long userid, List<ShoppingCartProduct> productsList) {
         this.userid = userid;

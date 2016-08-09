@@ -1,5 +1,6 @@
 package com.uiservice;
 
+import com.uiservice.messaging.CartProcessor;
 import com.uiservice.messaging.ProductProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,11 +19,10 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
         HibernateJpaAutoConfiguration.class,
         DataSourceTransactionManagerAutoConfiguration.class})
 @EnableEurekaClient
-@EnableBinding(ProductProcessor.class)
+@EnableBinding({ProductProcessor.class, CartProcessor.class})
 public class AngularUiApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(AngularUiApplication.class, args);
     }
 }
-,

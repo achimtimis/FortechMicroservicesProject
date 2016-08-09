@@ -23,8 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-
     Logger logger = Logger.getLogger(UserController.class);
 
     @Autowired
@@ -96,25 +94,19 @@ public class UserController {
         existingUser.setUsername(newUser.getUsername());
         existingUser.setPassword(newUser.getPassword());
         existingUser = userRepository.save(existingUser);
-
         return existingUser;
-
     }
 
     /**
-     * returns the user of a given id
+     * Returns user with a id
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String getUser(@PathVariable("id") Long id){
-
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public User getUser(@PathVariable("id") Long id){
         User existingUser = userRepository.findOne(id);
-
-        logger.info("Emit to user-queue: " + existingUser);
-        template.convertAndSend(existingUser);
-
-        return "Emit to user-queue";
+        logger.info("Sent via Rest API user: " + existingUser);
+        return existingUser;
     }
 
 }
