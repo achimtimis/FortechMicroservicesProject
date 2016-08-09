@@ -1,23 +1,29 @@
 package com.cartservice.controller;
 
+import com.cartservice.messaging.CartProcessor;
 import com.cartservice.repository.ShoppingCartProductsRepository;
 import com.cartservice.repository.ShoppingCartRepository;
 import com.shopcommon.model.*;
 import org.apache.log4j.Logger;
 import org.joda.time.LocalDateTime;
-import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,59 +32,61 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/carts")
 public class ShoppingCartController {
+    Logger logger;
 
-    Logger logger = Logger.getLogger(ShoppingCartController.class);
-
+    @Autowired
+    ShoppingCartProductsRepository shoppingCartProductsRepository;
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
     @Autowired
-    private AmqpAdmin rabbitAdmin;
+    @Qualifier(CartProcessor.OUTPUT_UPDATE)
+    private MessageChannel channel_update;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    ShoppingCartProductsRepository shoppingCartProductsRepository;
+    private LoadBalancerClient loadBalancer;
 
     /**
-     * Send all shopping carts from the database via cart-queue
-     *
-     * @return
-     */
-    @RequestMapping(method= RequestMethod.GET)
-    public List<ShoppingCart> getShoppingCarts(){
-        List<ShoppingCart> carts = this.shoppingCartRepository.findAll();
+     * USED TO MAKE REST CALLS
+     **/
+    RestTemplate restTemplate;
 
-        rabbitTemplate.convertAndSend("cart-queue", carts);
-
-        logger.info("A number of " + carts.size() + " were sent via cart-queue");
-
-        return carts;
-
+    public ShoppingCartController() {
+        logger = Logger.getLogger(ShoppingCartController.class);
+        restTemplate = new RestTemplate();
     }
 
     /**
-     * Send a specific shopping cart via cart-queue
+     * Return all carts
+     *
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ShoppingCart[] getShoppingCarts() {
+        ShoppingCart[] carts = (ShoppingCart[]) this.shoppingCartRepository.findAll().toArray();
+        logger.info("A number of " + carts.length + " were sent via Rest API");
+        return carts;
+    }
+
+    /**
+     * Returns a specific cart
      *
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}",method=RequestMethod.GET)
-    public ShoppingCart getShoppingCart(@PathVariable  Long id ) {
-        ShoppingCart shoppingCart= this.shoppingCartRepository.findOne(id);
-
-        rabbitAdmin.purgeQueue("cart-queue", false);
-
-        if(shoppingCart != null){
-            rabbitTemplate.convertAndSend("cart-queue", shoppingCart);
-
-            logger.info("Sent via cart-queue: " + shoppingCart);
-        }
-        else{
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ShoppingCart getShoppingCart(@PathVariable Long id) {
+        ShoppingCart shoppingCart = this.shoppingCartRepository.findOne(id);
+        if (shoppingCart != null) {
+            logger.info("Sent via Rest API: " + shoppingCart);
+            return shoppingCart;
+        } else {
             logger.info("No shopping cart was found with id " + id);
         }
-        return shoppingCart;
+        return null;
     }
 
     /**
@@ -86,41 +94,34 @@ public class ShoppingCartController {
      *
      * @param id
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deleteShoppingCart(@PathVariable Long id){
-        logger.info("Shopping cart with id " + id + " was deleted from the database");
-
+    @StreamListener(CartProcessor.INPUT_DELETE)
+    public void deleteShoppingCart(Long id) {
+        logger.info("Shopping cart with id " + id + " was deleted");
         shoppingCartRepository.delete(id);
     }
 
-
-    @RequestMapping(value = "/user/{userId}", method = RequestMethod.POST)
-    public ShoppingCart create(@PathVariable("userId") Long userId){
+    /**
+     * Create a shopping cart for a specific user
+     *
+     * @param userId
+     * @return
+     */
+    @StreamListener(CartProcessor.INPUT_CREATE)
+    public void create(Long userId) {
         User user = this.receiveUser(userId);
-
-        if(user != null){
+        if (user != null) {
             ShoppingCart shoppingCart = new ShoppingCart();
             shoppingCart.setUserid(user.getId());
-
             logger.info("Shopping cart created for user id " + user.getId());
-
-            return shoppingCartRepository.saveAndFlush(shoppingCart);
+            shoppingCartRepository.saveAndFlush(shoppingCart);
         }
+        logger.warn("Shopping cart was not created for user id " + user.getId() + ", user not found");
+    }
 
-        logger.info("Shopping cart was not created for user id " + user.getId() + ", user not found");
-
-        return null;
-}
-
-    @RequestMapping(value = "/user/{id}",method=RequestMethod.GET)
-    public ShoppingCart findShoppingCartByUserId(@PathVariable Long id){
-
-        rabbitAdmin.purgeQueue("cart-queue", false);
-
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ShoppingCart findShoppingCartByUserId(@PathVariable Long id) {
         ShoppingCart cart = this.shoppingCartRepository.findByUserid(id);
-        logger.info("Sent over cart-queue cart: " + cart);
-        rabbitTemplate.convertAndSend("cart-queue",cart);
-
+        logger.info("Sent via Rest API cart: " + cart);
         return cart;
     }
 
@@ -130,31 +131,15 @@ public class ShoppingCartController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}/user", method = RequestMethod.GET)
-    public User getCartUser(@PathVariable("id") Long id){
+    @RequestMapping(value = "/{id}/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public User getCartUser(@PathVariable("id") Long id) {
         ShoppingCart cart = shoppingCartRepository.findOne(id);
-
-        rabbitAdmin.purgeQueue("user-queue", false);
-
-        URL obj = null;
-        try {
-            obj = new URL("http://localhost:9999/user-service/users/" + cart.getUserid());
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.getResponseCode();
-
-            User user = (User)rabbitTemplate.receiveAndConvert("user-queue");
-
-            logger.info("Received from user-service: " +  user);
-
-            return user;
-
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
+        User user = receiveUser(cart.getUserid());
+        if (user != null) {
+            logger.info("Requested via Rest API user: " + user);
+        } else {
+            logger.info("No user found!");
         }
-
-        logger.info("No user found!");
         return null;
     }
 
@@ -165,45 +150,35 @@ public class ShoppingCartController {
      * @return
      */
     @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
-    public List<Product> getCartProducts(@PathVariable("id") Long cartId){
-
-
-        rabbitAdmin.purgeQueue("cart-queue", false);
-
-        rabbitAdmin.purgeQueue("product-queue", false);
-
+    public List<Product> getCartProducts(@PathVariable("id") Long cartId) {
         List<Product> products = new ArrayList<>();
-
-        logger.info("Requested from product-service products from cart with id " +  cartId);
-
+        logger.info("Requested from product-service products from cart with id " + cartId);
         ShoppingCart cart = shoppingCartRepository.findOne(cartId);
-
         cart.getProductsList().forEach(cartProduct -> products.add(this.receiveProduct(cartProduct.getProductId())));
-
-        logger.info("Received from product-service a number of " +  products.size() + " products");
         return products;
     }
 
     /**
-     * Add a product to the shopping cart
+     * Add a specific product with a specific quantity to a cart
      *
-     * @param id
-     * @param productId
-     * @param quantity
+     * @param info Map with info about cart id, product id and product quantity
      * @return
      */
-    @RequestMapping(value = "/{id}/products", method = RequestMethod.POST)
-    public ShoppingCart addProductToShoppingCart(@PathVariable("id") Long id, @RequestParam(value = "productId") Long productId,@RequestParam(value = "quantity") int quantity){
+    @StreamListener(CartProcessor.INPUT_ADD_PRODUCT)
+    public void addProductToShoppingCart(Map<String, Long> info) {
+        Long id = info.get("id");
+        Long productId = info.get("productId");
+        Integer quantity = Integer.parseInt(info.get("quantity").toString());
 
         Product product = this.receiveProduct(productId);
 
-        if (product.getStock() >= quantity && product != null){
-            ShoppingCart shoppingCart=this.shoppingCartRepository.findOne(id);
-            ShoppingCartProduct shoppingCartProduct= new ShoppingCartProduct(product.getId(),quantity,product.getName(),product.getPrice());
+        if (product.getStock() >= quantity && product != null) {
+            ShoppingCart shoppingCart = shoppingCartRepository.findOne(shoppingCartRepository.findByUserid(id).getId());
+            ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct(product.getId(), quantity, product.getName(), product.getPrice());
             shoppingCartProduct.setShoppingCart(shoppingCart);
             shoppingCart.getProductsList().add(shoppingCartProduct);
 
-            product.setStock(product.getStock() -  quantity);
+            product.setStock(product.getStock() - quantity);
 
             this.sendUpdateProduct(product);
 
@@ -211,41 +186,32 @@ public class ShoppingCartController {
             shoppingCartRepository.save(shoppingCart);
 
             logger.info("Product " + product + " was added to shopping cart with id " + id);
-
-            return shoppingCart;
-        }
-
-        else if(product == null){
+        } else if (product == null) {
             logger.warn("No product found with id " + productId);
-        }
-
-        else if(product.getStock() < quantity) {
+        } else if (product.getStock() < quantity) {
             logger.warn("Not enough products on stock");
         }
-        return null;
     }
 
     /**
-     * Delete a product from a specific shopping cart
+     * Delete a specific product from a specific cart
      *
-     * @param id
-     * @param productId
+     * @param info Map with info about cart id and product id
      * @return
      */
-    @RequestMapping(value = "/{id}/products", method = RequestMethod.DELETE)
-    public ShoppingCart removeProductFromShoppingCart(@PathVariable("id") Long id, @RequestParam(value = "productId") Long productId){
+    @StreamListener(CartProcessor.INPUT_REMOVE_PRODUCT)
+    public void removeProductFromShoppingCart(Map<String, Long> info) {
+        Long id = info.get("id");
+        Long productId = info.get("productId");
+
         Product product = this.receiveProduct(productId);
-
         logger.info("Deleted from shopping cart product with id:" + productId);
-
-        if(product != null){
+        if (product != null) {
             ShoppingCart shoppingCart = this.shoppingCartRepository.findOne(id);
-
             Optional<ShoppingCartProduct> ocp = shoppingCart.getProductsList().stream().filter(p -> p.getProductId().equals(productId)).findFirst();
-            if(ocp.isPresent()){
+            if (ocp.isPresent()) {
                 product.setStock(product.getStock() + ocp.get().getQuantity());
                 this.sendUpdateProduct(product);
-
 
                 shoppingCart.setProductsList(shoppingCart.getProductsList().stream().filter(p -> !p.getProductId().equals(productId)).collect(Collectors.toList()));
 
@@ -253,15 +219,12 @@ public class ShoppingCartController {
 
                 logger.info("Deleted product " + product + " from shopping cart with id " + id);
 
-                return this.shoppingCartRepository.saveAndFlush(shoppingCart);
-            }
-            else{
+                shoppingCartRepository.saveAndFlush(shoppingCart);
+            } else {
                 logger.warn("Product not found in shopping cart");
-                return null;
             }
         }
         logger.warn("Product not found in database");
-        return null;
     }
 
     /**
@@ -269,8 +232,8 @@ public class ShoppingCartController {
      *
      * @param id
      */
-    @RequestMapping(value = "/{id}/order", method = RequestMethod.POST)
-    public void confirmOrder(@PathVariable("id") Long id){
+    @StreamListener(CartProcessor.INPUT_CONFIRM_ORDER)
+    public void confirmOrder(Long id) {
         ShoppingCart cart = shoppingCartRepository.findOne(id);
 
         Order order = new Order();
@@ -278,20 +241,16 @@ public class ShoppingCartController {
         order.setUserId(cart.getUserid());
 
         List<OrderProduct> orderProducts = new ArrayList<>();
-        cart.getProductsList().stream().forEach(shoppingCartProduct -> {
+        cart.getProductsList().forEach(shoppingCartProduct -> {
             OrderProduct op = new OrderProduct();
             op.setProductId(shoppingCartProduct.getProductId());
             op.setProductName(shoppingCartProduct.getProductName());
             op.setProductPrice(shoppingCartProduct.getProductPrice());
             op.setQuantity(shoppingCartProduct.getQuantity());
-
             orderProducts.add(op);
         });
         order.setProducts(orderProducts);
-
-
         sendOrder(order);
-
         shoppingCartRepository.delete(id);
     }
 
@@ -301,28 +260,9 @@ public class ShoppingCartController {
      * @param productId
      * @return
      */
-    private Product receiveProduct(Long productId){
-        URL url = null;
-        Product product = null;
-
-        try {
-            url = new URL("http://localhost:9999/product-service/products/" + productId);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.getResponseCode();
-
-            product = (Product)rabbitTemplate.receiveAndConvert("product-queue");
-            logger.info("Received from product-service product: " + product);
-
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage());
-        } catch (ProtocolException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-
-        return product;
+    private Product receiveProduct(Long productId) {
+        ServiceInstance instance = loadBalancer.choose("product-service");
+        return restTemplate.getForObject(instance.getUri() + "/products/" + productId, Product.class);
     }
 
     /**
@@ -330,25 +270,9 @@ public class ShoppingCartController {
      *
      * @param product
      */
-    private void sendUpdateProduct(Product product){
-        URL url = null;
-
-        rabbitTemplate.convertAndSend("product-queue", product);
-        logger.info("Sent to product-service product " +  product);
-
-        try {
-            url = new URL("http://localhost:9999/product-service/products");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("PUT");
-            connection.getResponseCode();
-
-        } catch (MalformedURLException e) {
-            logger.error(e.getMessage());
-        } catch (ProtocolException e) {
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private void sendUpdateProduct(Product product) {
+        logger.info("SENT VIA OUTPUT_PRODUCT_UPDATE: " + product);
+        channel_update.send(MessageBuilder.withPayload(product).build());
     }
 
     /**
@@ -356,11 +280,11 @@ public class ShoppingCartController {
      *
      * @param order
      */
-    private void sendOrder(Order order){
+    private void sendOrder(Order order) {
         URL url = null;
 
         rabbitTemplate.convertAndSend("order-queue", order);
-        logger.info("Sent to order-service order:" +  order);
+        logger.info("Sent to order-service order:" + order);
 
         try {
             url = new URL("http://localhost:9999/orders");
@@ -383,16 +307,16 @@ public class ShoppingCartController {
      * @param userId
      * @return
      */
-    private User receiveUser(Long userId){
+    private User receiveUser(Long userId) {
         User user = null;
 
         try {
-            URL url= new URL("http://localhost:9999/users/" + userId);
+            URL url = new URL("http://localhost:9999/users/" + userId);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.getResponseCode();
 
-            user = (User)rabbitTemplate.receiveAndConvert("user-queue");
+            user = (User) rabbitTemplate.receiveAndConvert("user-queue");
             logger.info("Received from user-service user: " + user);
 
         } catch (MalformedURLException e) {
@@ -406,4 +330,32 @@ public class ShoppingCartController {
         return user;
     }
 
+    /**************************************/
+    /**********PRODUCT RECEIVERS***********/
+    /**************************************/
+
+    /**
+     * Receiver for all products
+     *
+     * @return
+     */
+    public List<Product> getAllProducts() {
+        ServiceInstance instance = loadBalancer.choose("product-service");
+        List<Product> products = Arrays.asList(restTemplate.getForObject(instance.getUri() + "/products", Product[].class));
+        logger.info("Received from product service: " + products);
+        return products;
+    }
+
+    /**
+     * Receiver for product
+     *
+     * @param id
+     * @return
+     */
+    public Product getProduct(Long id) {
+        ServiceInstance instance = loadBalancer.choose("product-service");
+        Product product = restTemplate.getForObject(instance.getUri() + "/products/" + id, Product.class);
+        logger.info("Received from product service: " + product);
+        return product;
+    }
 }
