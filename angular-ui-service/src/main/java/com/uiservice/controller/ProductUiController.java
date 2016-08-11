@@ -6,6 +6,10 @@ import com.uiservice.messaging.ProductProcessor;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.MediaType;
@@ -19,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @RestController
 @RequestMapping(value = "/api/products")
+@EnableCaching
 public class ProductUiController {
     Logger logger;
 
@@ -35,6 +40,7 @@ public class ProductUiController {
 
     @Autowired
     private LoadBalancerClient loadBalancer;
+
 
     /**
      * USED TO MAKE REST CALLS
@@ -53,6 +59,7 @@ public class ProductUiController {
      */
     @RequestMapping(method = RequestMethod.GET)
     @HystrixCommand(fallbackMethod = "getAllProductsFallback")
+    @Cacheable(value = "products")
     public Product[] getAllProducts() {
         ServiceInstance instance = loadBalancer.choose("product-service");
         return restTemplate.getForObject(instance.getUri() + "/products", Product[].class);
@@ -64,6 +71,7 @@ public class ProductUiController {
      * @param id
      * @return
      */
+    @Cacheable(value = "product")
     @HystrixCommand(fallbackMethod = "getProductFallback")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Product getProduct(@PathVariable("id") Long id) {
@@ -79,6 +87,9 @@ public class ProductUiController {
      */
     @HystrixCommand(fallbackMethod = "addProductFallback")
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "product", key = "#product.id")})
     public Product addProduct(@RequestBody Product product) {
         logger.info("SENT VIA OUTPUT_CREATE: " + product);
         channel_create.send(MessageBuilder.withPayload(product).build());
@@ -92,6 +103,9 @@ public class ProductUiController {
      */
     @HystrixCommand(fallbackMethod = "removeProductFallback")
     @RequestMapping(method = RequestMethod.DELETE)
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "product")})
     public void removeProduct(@RequestParam("id") Long id) {
         logger.info("SENT VIA OUTPUT_DELETE: " + id);
         this.channel_delete.send(MessageBuilder.withPayload(id).build());
